@@ -1,4 +1,4 @@
-resource "snowmirror_synchronization" "my_synchronization" {
+data "snowmirror_synchronization" "my_synchronization" {
   active                  = true
   allow_inherited_columns = false
   auto_schema_update      = true
@@ -19,8 +19,8 @@ resource "snowmirror_synchronization" "my_synchronization" {
     execution_type = "CLEAN_AND_SYNCHRONIZE"
     type           = "MANUALLY"
   }
+  id                   = 9
   mirror_table         = "incident"
-  name                 = "incident"
   reference_field_type = "...my_reference_field_type..."
   run_immediately      = false
   scheduler = {
@@ -28,6 +28,5 @@ resource "snowmirror_synchronization" "my_synchronization" {
     type       = "MANUALLY"
   }
   scheduler_priority = "NORMAL"
-  table              = "incident"
   view               = "...my_view..."
 }

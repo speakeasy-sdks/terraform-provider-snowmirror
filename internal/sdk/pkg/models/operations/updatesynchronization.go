@@ -8,9 +8,9 @@ import (
 )
 
 type UpdateSynchronizationRequest struct {
-	// A JSON representation of the Api to upsert
+	// A JSON representation of the synchronization to update
 	CreateSynchronizationInput shared.CreateSynchronizationInput `request:"mediaType=application/json"`
-	// The id of the sync.
+	// Id of the synchronization to update.
 	ID int64 `pathParam:"style=simple,explode=false,name=id"`
 }
 

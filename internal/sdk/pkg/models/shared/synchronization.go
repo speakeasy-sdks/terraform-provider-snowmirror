@@ -2,7 +2,7 @@
 
 package shared
 
-// Synchronization - An order helps you make coffee
+// Synchronization - A Synchonization object
 type Synchronization struct {
 	Sync *SyncronizationSyncOutput `json:"sync,omitempty"`
 }

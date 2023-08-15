@@ -59,7 +59,8 @@ func (c *sdkConfiguration) GetServerDetails() (string, map[string]string) {
 	return ServerList[c.ServerIndex], nil
 }
 
-// Snowmirror - SnowMirror API: Example Hashicups through Speakeasy
+// Snowmirror - SnowMirror API: This document is a guide which will walk you through SnowMirror REST API.
+// The purpose of the REST API is to allow developers to integrate SnowMirror with other applications.
 // https://www.snow-mirror.com/doc/RestApiGuide.html - The Speakeasy Platform Documentation
 type Snowmirror struct {
 	// Synchronization - Synchronization
@@ -119,9 +120,9 @@ func New(opts ...SDKOption) *Snowmirror {
 	sdk := &Snowmirror{
 		sdkConfiguration: sdkConfiguration{
 			Language:          "terraform",
-			OpenAPIDocVersion: "0.0.1",
+			OpenAPIDocVersion: "5.1.13",
 			SDKVersion:        "0.1.1",
-			GenVersion:        "2.62.1",
+			GenVersion:        "internal",
 		},
 	}
 	for _, opt := range opts {

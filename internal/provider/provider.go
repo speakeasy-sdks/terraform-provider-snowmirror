@@ -37,7 +37,8 @@ func (p *SnowmirrorProvider) Metadata(ctx context.Context, req provider.Metadata
 
 func (p *SnowmirrorProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: `SnowMirror API: Example Hashicups through Speakeasy`,
+		MarkdownDescription: `SnowMirror API: This document is a guide which will walk you through SnowMirror REST API. ` + "\n" +
+			`The purpose of the REST API is to allow developers to integrate SnowMirror with other applications.`,
 		Attributes: map[string]schema.Attribute{
 			"server_url": schema.StringAttribute{
 				MarkdownDescription: "Server URL (defaults to http://localhost:9090)",
@@ -95,7 +96,9 @@ func (p *SnowmirrorProvider) Resources(ctx context.Context) []func() resource.Re
 }
 
 func (p *SnowmirrorProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{}
+	return []func() datasource.DataSource{
+		NewSynchronizationDataSource,
+	}
 }
 
 func New(version string) func() provider.Provider {

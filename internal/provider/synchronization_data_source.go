@@ -6,33 +6,31 @@ import (
 	"context"
 	"fmt"
 	"snowmirror/internal/sdk"
-	"snowmirror/internal/sdk/pkg/models/shared"
+	"snowmirror/internal/sdk/pkg/models/operations"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"snowmirror/internal/sdk/pkg/models/operations"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ resource.Resource = &SynchronizationResource{}
-var _ resource.ResourceWithImportState = &SynchronizationResource{}
+var _ datasource.DataSource = &SynchronizationDataSource{}
+var _ datasource.DataSourceWithConfigure = &SynchronizationDataSource{}
 
-func NewSynchronizationResource() resource.Resource {
-	return &SynchronizationResource{}
+func NewSynchronizationDataSource() datasource.DataSource {
+	return &SynchronizationDataSource{}
 }
 
-// SynchronizationResource defines the resource implementation.
-type SynchronizationResource struct {
+// SynchronizationDataSource is the data source implementation.
+type SynchronizationDataSource struct {
 	client *sdk.Snowmirror
 }
 
-// SynchronizationResourceModel describes the resource data model.
-type SynchronizationResourceModel struct {
+// SynchronizationDataSourceModel describes the data model.
+type SynchronizationDataSourceModel struct {
 	Active                types.Bool                                       `tfsdk:"active"`
 	AllowInheritedColumns types.Bool                                       `tfsdk:"allow_inherited_columns"`
 	AutoSchemaUpdate      types.Bool                                       `tfsdk:"auto_schema_update"`
@@ -52,13 +50,15 @@ type SynchronizationResourceModel struct {
 	View                  types.String                                     `tfsdk:"view"`
 }
 
-func (r *SynchronizationResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+// Metadata returns the data source type name.
+func (r *SynchronizationDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_synchronization"
 }
 
-func (r *SynchronizationResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+// Schema defines the schema for the data source.
+func (r *SynchronizationDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Synchronization Resource",
+		MarkdownDescription: "Synchronization DataSource",
 
 		Attributes: map[string]schema.Attribute{
 			"active": schema.BoolAttribute{
@@ -145,15 +145,15 @@ func (r *SynchronizationResource) Schema(ctx context.Context, req resource.Schem
 				},
 			},
 			"id": schema.Int64Attribute{
-				Computed:    true,
-				Description: `Sync ID`,
+				Required:    true,
+				Description: `Id of the synchronization.`,
 			},
 			"mirror_table": schema.StringAttribute{
 				Required:    true,
 				Description: `Name of the table in mirror database where the data will be migrated.`,
 			},
 			"name": schema.StringAttribute{
-				Required:    true,
+				Computed:    true,
 				Description: `Display name of the synchronization.`,
 			},
 			"reference_field_type": schema.StringAttribute{
@@ -201,7 +201,6 @@ func (r *SynchronizationResource) Schema(ctx context.Context, req resource.Schem
 			},
 			"table": schema.StringAttribute{
 				Computed:    true,
-				Optional:    true,
 				Description: `Name of the table in ServiceNow.`,
 			},
 			"view": schema.StringAttribute{
@@ -212,7 +211,7 @@ func (r *SynchronizationResource) Schema(ctx context.Context, req resource.Schem
 	}
 }
 
-func (r *SynchronizationResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *SynchronizationDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
 		return
@@ -222,7 +221,7 @@ func (r *SynchronizationResource) Configure(ctx context.Context, req resource.Co
 
 	if !ok {
 		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
+			"Unexpected DataSource Configure Type",
 			fmt.Sprintf("Expected *sdk.Snowmirror, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 
@@ -232,59 +231,11 @@ func (r *SynchronizationResource) Configure(ctx context.Context, req resource.Co
 	r.client = client
 }
 
-func (r *SynchronizationResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *SynchronizationResourceModel
+func (r *SynchronizationDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data *SynchronizationDataSourceModel
 	var item types.Object
 
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &item)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	resp.Diagnostics.Append(item.As(ctx, &data, basetypes.ObjectAsOptions{
-		UnhandledNullAsEmpty:    true,
-		UnhandledUnknownAsEmpty: true,
-	})...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	sync := data.ToCreateSDKType()
-	request := shared.CreateSynchronizationInput{
-		Sync: sync,
-	}
-	res, err := r.client.Synchronization.CreateSynchronization(ctx, request)
-	if err != nil {
-		resp.Diagnostics.AddError("failure to invoke API", err.Error())
-		if res != nil && res.RawResponse != nil {
-			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res.RawResponse))
-		}
-		return
-	}
-	if res == nil {
-		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
-		return
-	}
-	if res.StatusCode != 200 {
-		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
-		return
-	}
-	if res.Synchronization.Sync == nil {
-		resp.Diagnostics.AddError("unexpected response from API. No response body", debugResponse(res.RawResponse))
-		return
-	}
-	data.RefreshFromCreateResponse(res.Synchronization.Sync)
-
-	// Save updated data into Terraform state
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *SynchronizationResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *SynchronizationResourceModel
-	var item types.Object
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &item)...)
+	resp.Diagnostics.Append(req.Config.Get(ctx, &item)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -326,91 +277,4 @@ func (r *SynchronizationResource) Read(ctx context.Context, req resource.ReadReq
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *SynchronizationResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *SynchronizationResourceModel
-	merge(ctx, req, resp, &data)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	sync := data.ToUpdateSDKType()
-	createSynchronizationInput := shared.CreateSynchronizationInput{
-		Sync: sync,
-	}
-	id := data.ID.ValueInt64()
-	request := operations.UpdateSynchronizationRequest{
-		CreateSynchronizationInput: createSynchronizationInput,
-		ID:                         id,
-	}
-	res, err := r.client.Synchronization.UpdateSynchronization(ctx, request)
-	if err != nil {
-		resp.Diagnostics.AddError("failure to invoke API", err.Error())
-		if res != nil && res.RawResponse != nil {
-			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res.RawResponse))
-		}
-		return
-	}
-	if res == nil {
-		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
-		return
-	}
-	if res.StatusCode != 200 {
-		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
-		return
-	}
-	if res.Synchronization.Sync == nil {
-		resp.Diagnostics.AddError("unexpected response from API. No response body", debugResponse(res.RawResponse))
-		return
-	}
-	data.RefreshFromUpdateResponse(res.Synchronization.Sync)
-
-	// Save updated data into Terraform state
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-}
-
-func (r *SynchronizationResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data *SynchronizationResourceModel
-	var item types.Object
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &item)...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	resp.Diagnostics.Append(item.As(ctx, &data, basetypes.ObjectAsOptions{
-		UnhandledNullAsEmpty:    true,
-		UnhandledUnknownAsEmpty: true,
-	})...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	id := data.ID.ValueInt64()
-	request := operations.DeleteSynchronizationRequest{
-		ID: id,
-	}
-	res, err := r.client.Synchronization.DeleteSynchronization(ctx, request)
-	if err != nil {
-		resp.Diagnostics.AddError("failure to invoke API", err.Error())
-		if res != nil && res.RawResponse != nil {
-			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res.RawResponse))
-		}
-		return
-	}
-	if res == nil {
-		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
-		return
-	}
-	if res.StatusCode != 200 {
-		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
-		return
-	}
-
-}
-
-func (r *SynchronizationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

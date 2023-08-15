@@ -4,13 +4,10 @@ package operations
 
 import (
 	"net/http"
-	"snowmirror/internal/sdk/pkg/models/shared"
 )
 
-type CreateSynchronizationResponse struct {
+type PostSynchronizationImportResponse struct {
 	ContentType string
 	StatusCode  int
 	RawResponse *http.Response
-	// OK
-	Synchronization *shared.Synchronization
 }

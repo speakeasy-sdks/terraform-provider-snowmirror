@@ -53,6 +53,10 @@ tools/tools.go
 internal/sdk/pkg/models/operations/createsynchronization.go
 internal/sdk/pkg/models/operations/deletesynchronization.go
 internal/sdk/pkg/models/operations/getsynchronization.go
+internal/sdk/pkg/models/operations/getsynchronizationaction.go
+internal/sdk/pkg/models/operations/getsynchronizationexport.go
+internal/sdk/pkg/models/operations/getsynchronizationimport.go
+internal/sdk/pkg/models/operations/postsynchronizationimport.go
 internal/sdk/pkg/models/operations/updatesynchronization.go
 internal/sdk/pkg/models/shared/synchronization.go
 internal/sdk/pkg/models/shared/syncronizationsyncoutput.go
@@ -65,3 +69,6 @@ examples/provider/provider.tf
 internal/provider/synchronization_resource.go
 internal/provider/synchronization_resource_sdk.go
 examples/resources/snowmirror_synchronization/resource.tf
+internal/provider/synchronization_data_source.go
+internal/provider/synchronization_data_source_sdk.go
+examples/data-sources/snowmirror_synchronization/data-source.tf

@@ -7,7 +7,7 @@ import (
 )
 
 type DeleteSynchronizationRequest struct {
-	// The ID of the order to delete.
+	// Id of the synchronization to delete.
 	ID int64 `pathParam:"style=simple,explode=false,name=id"`
 }
 

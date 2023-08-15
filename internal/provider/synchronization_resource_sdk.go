@@ -26,7 +26,7 @@ func (r *SynchronizationResourceModel) ToCreateSDKType() *shared.CreateSynchroni
 	} else {
 		autoSchemaUpdate = nil
 	}
-	columns := make([]shared.CreateSynchronizationSyncInputColumns, 0)
+	var columns []shared.CreateSynchronizationSyncInputColumns = nil
 	for _, columnsItem := range r.Columns {
 		name := new(string)
 		if !columnsItem.Name.IsUnknown() && !columnsItem.Name.IsNull() {
@@ -38,7 +38,7 @@ func (r *SynchronizationResourceModel) ToCreateSDKType() *shared.CreateSynchroni
 			Name: name,
 		})
 	}
-	columnsToExclude := make([]shared.CreateSynchronizationSyncInputColumnsToExclude, 0)
+	var columnsToExclude []shared.CreateSynchronizationSyncInputColumnsToExclude = nil
 	for _, columnsToExcludeItem := range r.ColumnsToExclude {
 		name1 := new(string)
 		if !columnsToExcludeItem.Name.IsUnknown() && !columnsToExcludeItem.Name.IsNull() {
@@ -50,9 +50,9 @@ func (r *SynchronizationResourceModel) ToCreateSDKType() *shared.CreateSynchroni
 			Name: name1,
 		})
 	}
-	deleteStrategy := new(string)
+	deleteStrategy := new(shared.CreateSynchronizationSyncInputDeleteStrategy)
 	if !r.DeleteStrategy.IsUnknown() && !r.DeleteStrategy.IsNull() {
-		*deleteStrategy = r.DeleteStrategy.ValueString()
+		*deleteStrategy = shared.CreateSynchronizationSyncInputDeleteStrategy(r.DeleteStrategy.ValueString())
 	} else {
 		deleteStrategy = nil
 	}
@@ -70,22 +70,22 @@ func (r *SynchronizationResourceModel) ToCreateSDKType() *shared.CreateSynchroni
 		} else {
 			beginDate = nil
 		}
-		executionType := new(string)
+		executionType := new(shared.CreateSynchronizationSyncInputFullLoadSchedulerExecutionType)
 		if !r.FullLoadScheduler.ExecutionType.IsUnknown() && !r.FullLoadScheduler.ExecutionType.IsNull() {
-			*executionType = r.FullLoadScheduler.ExecutionType.ValueString()
+			*executionType = shared.CreateSynchronizationSyncInputFullLoadSchedulerExecutionType(r.FullLoadScheduler.ExecutionType.ValueString())
 		} else {
 			executionType = nil
 		}
-		type1 := new(string)
+		typeVar := new(shared.CreateSynchronizationSyncInputFullLoadSchedulerType)
 		if !r.FullLoadScheduler.Type.IsUnknown() && !r.FullLoadScheduler.Type.IsNull() {
-			*type1 = r.FullLoadScheduler.Type.ValueString()
+			*typeVar = shared.CreateSynchronizationSyncInputFullLoadSchedulerType(r.FullLoadScheduler.Type.ValueString())
 		} else {
-			type1 = nil
+			typeVar = nil
 		}
 		fullLoadScheduler = &shared.CreateSynchronizationSyncInputFullLoadScheduler{
 			BeginDate:     beginDate,
 			ExecutionType: executionType,
-			Type:          type1,
+			Type:          typeVar,
 		}
 	}
 	mirrorTable := r.MirrorTable.ValueString()
@@ -110,20 +110,20 @@ func (r *SynchronizationResourceModel) ToCreateSDKType() *shared.CreateSynchroni
 		} else {
 			beginDate1 = nil
 		}
-		type2 := new(string)
+		typeVar1 := new(shared.CreateSynchronizationSyncInputSchedulerType)
 		if !r.Scheduler.Type.IsUnknown() && !r.Scheduler.Type.IsNull() {
-			*type2 = r.Scheduler.Type.ValueString()
+			*typeVar1 = shared.CreateSynchronizationSyncInputSchedulerType(r.Scheduler.Type.ValueString())
 		} else {
-			type2 = nil
+			typeVar1 = nil
 		}
 		scheduler = &shared.CreateSynchronizationSyncInputScheduler{
 			BeginDate: beginDate1,
-			Type:      type2,
+			Type:      typeVar1,
 		}
 	}
-	schedulerPriority := new(string)
+	schedulerPriority := new(shared.CreateSynchronizationSyncInputSchedulerPriority)
 	if !r.SchedulerPriority.IsUnknown() && !r.SchedulerPriority.IsNull() {
-		*schedulerPriority = r.SchedulerPriority.ValueString()
+		*schedulerPriority = shared.CreateSynchronizationSyncInputSchedulerPriority(r.SchedulerPriority.ValueString())
 	} else {
 		schedulerPriority = nil
 	}

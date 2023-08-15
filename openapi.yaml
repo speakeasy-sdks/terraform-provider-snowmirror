@@ -363,8 +363,6 @@ components:
       properties:
         sync:
           $ref: '#/components/schemas/SyncronizationSyncOutput'
-      required:
-        - sync
       x-stoplight:
         id: b02cbc78ee913
   securitySchemes:

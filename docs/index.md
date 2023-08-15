@@ -3,12 +3,14 @@
 page_title: "snowmirror Provider"
 subcategory: ""
 description: |-
-  SnowMirror API: Example Hashicups through Speakeasy
+  SnowMirror API: This document is a guide which will walk you through SnowMirror REST API.
+  The purpose of the REST API is to allow developers to integrate SnowMirror with other applications.
 ---
 
 # snowmirror Provider
 
-SnowMirror API: Example Hashicups through Speakeasy
+SnowMirror API: This document is a guide which will walk you through SnowMirror REST API. 
+The purpose of the REST API is to allow developers to integrate SnowMirror with other applications.
 
 ## Example Usage
 

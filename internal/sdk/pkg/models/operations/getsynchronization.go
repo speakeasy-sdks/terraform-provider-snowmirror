@@ -8,7 +8,7 @@ import (
 )
 
 type GetSynchronizationRequest struct {
-	// The ID of the order get.
+	// Id of the synchronization.
 	ID int64 `pathParam:"style=simple,explode=false,name=id"`
 }
 
