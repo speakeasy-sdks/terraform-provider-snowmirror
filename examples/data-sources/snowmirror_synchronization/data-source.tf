@@ -7,13 +7,11 @@ data "snowmirror_synchronization" "my_synchronization" {
         columns = [
             {
                 name = "Miriam Huel"
-                sys_id = "...my_sys_id..."
             },
         ]
         columns_to_exclude = [
             {
                 name = "Erica Bogisich III"
-                sys_id = "...my_sys_id..."
             },
         ]
         delete_strategy = "...my_delete_strategy..."

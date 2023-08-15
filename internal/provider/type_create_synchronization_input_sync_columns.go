@@ -5,6 +5,5 @@ package provider
 import "github.com/hashicorp/terraform-plugin-framework/types"
 
 type CreateSynchronizationInputSyncColumns struct {
-	Name  types.String `tfsdk:"name"`
-	SysID types.String `tfsdk:"sys_id"`
+	Name types.String `tfsdk:"name"`
 }

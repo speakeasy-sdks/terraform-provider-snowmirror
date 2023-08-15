@@ -37,15 +37,8 @@ func (r *SynchronizationResourceModel) ToCreateSDKType() *shared.CreateSynchroni
 			} else {
 				name = nil
 			}
-			sysID := new(string)
-			if !columnsItem.SysID.IsUnknown() && !columnsItem.SysID.IsNull() {
-				*sysID = columnsItem.SysID.ValueString()
-			} else {
-				sysID = nil
-			}
 			columns = append(columns, shared.CreateSynchronizationInputSyncColumns{
-				Name:  name,
-				SysID: sysID,
+				Name: name,
 			})
 		}
 		var columnsToExclude []shared.CreateSynchronizationInputSyncColumnsToExclude = nil
@@ -56,15 +49,8 @@ func (r *SynchronizationResourceModel) ToCreateSDKType() *shared.CreateSynchroni
 			} else {
 				name1 = nil
 			}
-			sysId1 := new(string)
-			if !columnsToExcludeItem.SysID.IsUnknown() && !columnsToExcludeItem.SysID.IsNull() {
-				*sysId1 = columnsToExcludeItem.SysID.ValueString()
-			} else {
-				sysId1 = nil
-			}
 			columnsToExclude = append(columnsToExclude, shared.CreateSynchronizationInputSyncColumnsToExclude{
-				Name:  name1,
-				SysID: sysId1,
+				Name: name1,
 			})
 		}
 		deleteStrategy := new(string)

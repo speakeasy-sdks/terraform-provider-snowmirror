@@ -3,13 +3,11 @@
 package shared
 
 type CreateSynchronizationInputSyncColumns struct {
-	Name  *string `json:"name,omitempty"`
-	SysID *string `json:"sysId,omitempty"`
+	Name *string `json:"name,omitempty"`
 }
 
 type CreateSynchronizationInputSyncColumnsToExclude struct {
-	Name  *string `json:"name,omitempty"`
-	SysID *string `json:"sysId,omitempty"`
+	Name *string `json:"name,omitempty"`
 }
 
 type CreateSynchronizationInputSyncFullLoadScheduler struct {

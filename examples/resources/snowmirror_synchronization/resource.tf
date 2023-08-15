@@ -6,13 +6,11 @@ resource "snowmirror_synchronization" "my_synchronization" {
         columns = [
             {
                 name = "Stuart Stiedemann"
-                sys_id = "...my_sys_id..."
             },
         ]
         columns_to_exclude = [
             {
                 name = "Sabrina Oberbrunner"
-                sys_id = "...my_sys_id..."
             },
         ]
         delete_strategy = "...my_delete_strategy..."

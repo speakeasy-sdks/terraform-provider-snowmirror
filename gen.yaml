@@ -1,6 +1,6 @@
 configVersion: 1.0.0
 management:
-  docChecksum: d9693f59197fb56c06bcfaef6c17251f
+  docChecksum: bdbadef1f59ecf143059439cad16d35c
   docVersion: 0.0.1
   speakeasyVersion: 1.72.0
   generationVersion: 2.84.1
@@ -19,6 +19,6 @@ features:
     globalServerURLs: 2.82.0
     includes: 2.81.1
 terraform:
-  version: 0.1.0
+  version: 0.1.1
   author: mikevdberge
   packageName: snowmirror

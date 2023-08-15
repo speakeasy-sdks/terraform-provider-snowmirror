@@ -68,9 +68,6 @@ func (r *SynchronizationDataSource) Schema(ctx context.Context, req datasource.S
 								"name": schema.StringAttribute{
 									Optional: true,
 								},
-								"sys_id": schema.StringAttribute{
-									Optional: true,
-								},
 							},
 						},
 					},
@@ -79,9 +76,6 @@ func (r *SynchronizationDataSource) Schema(ctx context.Context, req datasource.S
 						NestedObject: schema.NestedAttributeObject{
 							Attributes: map[string]schema.Attribute{
 								"name": schema.StringAttribute{
-									Optional: true,
-								},
-								"sys_id": schema.StringAttribute{
 									Optional: true,
 								},
 							},
