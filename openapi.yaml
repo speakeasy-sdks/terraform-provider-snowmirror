@@ -1,11 +1,15 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: SnowMirror API
-  description: Example Hashicups through Speakeasy
+  description: |-
+    This document is a guide which will walk you through SnowMirror REST API. 
+    The purpose of the REST API is to allow developers to integrate SnowMirror with other applications.
   contact:
     name: ' GuideVision'
     url: 'https://www.snow-mirror.com/doc/RestApiGuide.html'
-  version: 0.0.1
+  version: 5.1.13
+x-logo:
+  url: 'https://www.facebook.com/photo/?fbid=479614434167897&set=a.479614390834568&__tn__=%3C'
 servers:
   - url: 'http://localhost:9090'
     description: local
@@ -24,11 +28,11 @@ paths:
   /api/v1/synchronization:
     post:
       summary: Create a synchronization
-      description: Returns a list of all synchronizations.
+      description: Creates a new synchronization. Returns newly created synchronization including its ID.
       x-speakeasy-entity-operation: Synchronization#create
       operationId: createSynchronization
       requestBody:
-        description: A JSON representation of the Api to upsert
+        description: A JSON representation of the synchronization to create
         content:
           application/json:
             schema:
@@ -45,12 +49,12 @@ paths:
         - Synchronization
   '/api/v1/synchronization/{id}':
     get:
-      summary: Get an synchronizations
-      description: Returns a list of all synchronizations.
+      summary: Get a synchronization
+      description: Returns detailed information about the synchronization.
       x-speakeasy-entity-operation: Synchronization#get
       operationId: getSynchronization
       parameters:
-        - description: The ID of the order get.
+        - description: Id of the synchronization.
           in: path
           name: id
           x-speakeasy-match: id
@@ -68,18 +72,25 @@ paths:
         - Synchronization
     put:
       summary: Update a synchronization
-      description: Returns a list of all synchronizations.
+      description: |-
+        Updates a synchronization. The request body contains all fields (even those not being modified).
+
+        Here is how to modify a single field:
+
+        1) Retrieve the synchronization using GET endpoint.
+        2) Take the JSON response from GET endpoint and change the field. Do no touch the other fields.
+        3) Send the JSON from the previous step to the PUT endpoint.
       x-speakeasy-entity-operation: Synchronization#update
       operationId: updateSynchronization
       parameters:
-        - description: The id of the sync.
+        - description: Id of the synchronization to update.
           in: path
           name: id
           required: true
           schema:
             type: integer
       requestBody:
-        description: A JSON representation of the Api to upsert
+        description: A JSON representation of the synchronization to update
         content:
           application/json:
             schema:
@@ -100,7 +111,7 @@ paths:
       x-speakeasy-entity-operation: Synchronization#delete
       operationId: deleteSynchronization
       parameters:
-        - description: The ID of the order to delete.
+        - description: Id of the synchronization to delete.
           in: path
           name: id
           x-speakeasy-match: id
@@ -112,6 +123,95 @@ paths:
           description: OK
       tags:
         - Synchronization
+  /api/v1/synchronization/action:
+    get:
+      summary: Synchronization actions
+      tags:
+        - Synchronization
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  actions:
+                    type: array
+                    items:
+                      type: string
+                x-examples:
+                  Example 1:
+                    actions:
+                      - SYNCHRONIZE
+                      - CLEAN_AND_SYNCHRONIZE
+                      - STOP
+      operationId: getSynchronizationAction
+      description: Returns a list of all actions which can be performed on synchronizations.
+  /api/v1/synchronization/export:
+    get:
+      summary: Exports all synchronizations and their settings.
+      tags:
+        - Synchronization
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  actions:
+                    type: array
+                    items:
+                      type: string
+                x-examples:
+                  Example 1:
+                    actions:
+                      - SYNCHRONIZE
+                      - CLEAN_AND_SYNCHRONIZE
+                      - STOP
+      operationId: getSynchronizationExport
+      description: Exports all synchronizations and their settings.
+    parameters: []
+  /api/v1/synchronization/import:
+    get:
+      summary: Import synchronizations
+      tags:
+        - Synchronization
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  actions:
+                    type: array
+                    items:
+                      type: string
+                x-examples:
+                  Example 1:
+                    actions:
+                      - SYNCHRONIZE
+                      - CLEAN_AND_SYNCHRONIZE
+                      - STOP
+      operationId: getSynchronizationImport
+      description: Exports all synchronizations and their settings.
+    parameters: []
+    post:
+      summary: Import synchronizations and their settings
+      operationId: postSynchronizationImport
+      tags:
+        - Synchronization
+      responses:
+        '200':
+          description: OK
+      description: |-
+        Imports synchronizations and their settings.
+
+        This endpoint has to be called with a required "existing" parameter so that SnowMirror know how to deal with existing synchronizations.
 components:
   schemas:
     CreateSynchronizationSyncInput:
@@ -121,15 +221,18 @@ components:
         name:
           type: string
           description: Display name of the synchronization.
+          example: incident
         table:
           type: string
           description: Name of the table in ServiceNow.
+          example: incident
         view:
           type: string
           description: Name of the view in ServiceNow.
         mirrorTable:
           type: string
           description: Name of the table in mirror database where the data will be migrated.
+          example: incident
         columns:
           type: array
           items:
@@ -137,6 +240,7 @@ components:
             properties:
               name:
                 type: string
+                example: sys_id
         columnsToExclude:
           type: array
           items:
@@ -144,40 +248,88 @@ components:
             properties:
               name:
                 type: string
+                example: sys_created_by
         allowInheritedColumns:
           type: boolean
-          description: SnowMirror checks if columns exist in ServiceNow. If this flag is set to true,
+          description: 'SnowMirror checks if columns exist in ServiceNow. If this flag is set to true,'
         referenceFieldType:
           type: string
           description: Defines how to synchronize reference field types.
         autoSchemaUpdate:
           type: boolean
+          description: |
+                Configures how to check for schema changes in ServiceNow.
+
+                Enabled (true) - whenever a synchronization is executed, SnowMirror checks for schema changes in ServiceNow. Automatically adds, updates (data type, max. length of a column) and removes columns. If a new column is added SnowMirror clears the mirror table and downloads all records from scratch.
+                Enabled (no truncation) (ENABLED_WITHOUT_TRUNCATION) - the same as Enabled option. It handles new columns differently, though. If a new column is added SnowMirror does not clear the mirror table. Instead, it creates the column and populates it with a default value (which is defined in ServiceNow).
+          example: true                
         encodedQuery:
           type: string
+          example: ''
         deleteStrategy:
           type: string
+          enum:
+            - AUDIT
+            - TRUNCATE
+            - DIFF
+            - NONE
+          example: AUDIT          
         active:
           type: boolean
+          description: |-
+                true - synchronization is active and can be scheduled to synchronize data from ServiceNow
+                false - synchronization is deactivated and cannot be scheduled to synchronize data from ServiceNowNow          
+          example: true                
         runImmediately:
           type: boolean
+          description: Determines whether initial synchronization should be done          
+          example: false
         scheduler:
           type: object
           properties:
             type:
               type: string
+              description: Specifies when the incremental load synchronization will run
+              enum:
+                - MANUALLY
+                - DAILY
+                - WEEKLY
+                - PERIODICALLY
+                - CRON
+              example: MANUALLY              
             beginDate:
               type: string
+              example: '2014-08-07'
         fullLoadScheduler:
           type: object
           properties:
             executionType:
               type: string
+              enum:
+                - CLEAN_AND_SYNCHRONIZE
+                - DIFFERENTIAL.
+              example: CLEAN_AND_SYNCHRONIZE
             type:
               type: string
+              enum:
+                - MANUALLY
+                - DAILY
+                - WEEKLY
+                - PERIODICALLY
+                - CRON
+              example: MANUALLY
             beginDate:
               type: string
+              example: '2014-08-07'
         schedulerPriority:
           type: string
+          enum:
+            - HIGHEST
+            - HIGH
+            - NORMAL
+            - LOW
+            - LOWEST
+          example: NORMAL
       required:
         - name
         - mirrorTable
@@ -186,7 +338,7 @@ components:
       type: object
       properties:
         sync:
-          "$ref": "#/components/schemas/CreateSynchronizationSyncInput"
+          $ref: '#/components/schemas/CreateSynchronizationSyncInput'
       x-stoplight:
         id: d04afae9c8b4d
     SyncronizationSyncOutput:
@@ -206,11 +358,11 @@ components:
         - id
         - name
     Synchronization:
-      description: An order helps you make coffee
+      description: A Synchonization object
       type: object
       properties:
         sync:
-          "$ref": "#/components/schemas/SyncronizationSyncOutput"
+          $ref: '#/components/schemas/SyncronizationSyncOutput'
       required:
         - sync
       x-stoplight:
