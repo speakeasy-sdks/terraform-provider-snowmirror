@@ -64,6 +64,3 @@ examples/provider/provider.tf
 internal/provider/synchronization_resource.go
 internal/provider/synchronization_resource_sdk.go
 examples/resources/snowmirror_synchronization/resource.tf
-internal/provider/synchronization_data_source.go
-internal/provider/synchronization_data_source_sdk.go
-examples/data-sources/snowmirror_synchronization/data-source.tf

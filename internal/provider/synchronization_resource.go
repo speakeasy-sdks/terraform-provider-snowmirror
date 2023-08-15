@@ -30,13 +30,8 @@ type SynchronizationResource struct {
 
 // SynchronizationResourceModel describes the resource data model.
 type SynchronizationResourceModel struct {
-	Description types.String                    `tfsdk:"description"`
-	ID          types.Int64                     `tfsdk:"id"`
-	Image       types.String                    `tfsdk:"image"`
-	Name        types.String                    `tfsdk:"name"`
-	Price       types.Number                    `tfsdk:"price"`
-	Sync        *CreateSynchronizationInputSync `tfsdk:"sync"`
-	Teaser      types.String                    `tfsdk:"teaser"`
+	ID   types.Int64                     `tfsdk:"id"`
+	Sync *CreateSynchronizationInputSync `tfsdk:"sync"`
 }
 
 func (r *SynchronizationResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -48,27 +43,12 @@ func (r *SynchronizationResource) Schema(ctx context.Context, req resource.Schem
 		MarkdownDescription: "Synchronization Resource",
 
 		Attributes: map[string]schema.Attribute{
-			"description": schema.StringAttribute{
-				Computed:    true,
-				Description: `Product description of the coffee.`,
-			},
 			"id": schema.Int64Attribute{
 				Computed:    true,
-				Description: `Sync ID`,
-			},
-			"image": schema.StringAttribute{
-				Computed:    true,
-				Description: `URI for an image of the coffee.`,
-			},
-			"name": schema.StringAttribute{
-				Computed:    true,
-				Description: `Product name of the coffee.`,
-			},
-			"price": schema.NumberAttribute{
-				Computed:    true,
-				Description: `Suggested cost of the coffee.`,
+				Description: `fix easyspeak`,
 			},
 			"sync": schema.SingleNestedAttribute{
+				Computed: true,
 				Optional: true,
 				Attributes: map[string]schema.Attribute{
 					"active": schema.BoolAttribute{
@@ -121,6 +101,10 @@ func (r *SynchronizationResource) Schema(ctx context.Context, req resource.Schem
 							},
 						},
 					},
+					"id": schema.Int64Attribute{
+						Computed:    true,
+						Description: `Sync ID`,
+					},
 					"mirror_table": schema.StringAttribute{
 						Required:    true,
 						Description: `Name of the table in mirror database where the data will be migrated.`,
@@ -151,6 +135,7 @@ func (r *SynchronizationResource) Schema(ctx context.Context, req resource.Schem
 						Optional: true,
 					},
 					"table": schema.StringAttribute{
+						Computed:    true,
 						Optional:    true,
 						Description: `Name of the table in ServiceNow.`,
 					},
@@ -159,10 +144,6 @@ func (r *SynchronizationResource) Schema(ctx context.Context, req resource.Schem
 						Description: `Name of the view in ServiceNow.`,
 					},
 				},
-			},
-			"teaser": schema.StringAttribute{
-				Computed:    true,
-				Description: `Fun tagline for the coffee.`,
 			},
 		},
 	}

@@ -95,9 +95,7 @@ func (p *SnowmirrorProvider) Resources(ctx context.Context) []func() resource.Re
 }
 
 func (p *SnowmirrorProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{
-		NewSynchronizationDataSource,
-	}
+	return []func() datasource.DataSource{}
 }
 
 func New(version string) func() provider.Provider {

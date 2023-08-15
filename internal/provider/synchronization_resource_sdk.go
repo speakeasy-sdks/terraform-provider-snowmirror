@@ -4,7 +4,6 @@ package provider
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"math/big"
 	"snowmirror/internal/sdk/pkg/models/shared"
 )
 
@@ -29,7 +28,7 @@ func (r *SynchronizationResourceModel) ToCreateSDKType() *shared.CreateSynchroni
 		} else {
 			autoSchemaUpdate = nil
 		}
-		var columns []shared.CreateSynchronizationInputSyncColumns = nil
+		columns := make([]shared.CreateSynchronizationInputSyncColumns, 0)
 		for _, columnsItem := range r.Sync.Columns {
 			name := new(string)
 			if !columnsItem.Name.IsUnknown() && !columnsItem.Name.IsNull() {
@@ -41,7 +40,7 @@ func (r *SynchronizationResourceModel) ToCreateSDKType() *shared.CreateSynchroni
 				Name: name,
 			})
 		}
-		var columnsToExclude []shared.CreateSynchronizationInputSyncColumnsToExclude = nil
+		columnsToExclude := make([]shared.CreateSynchronizationInputSyncColumnsToExclude, 0)
 		for _, columnsToExcludeItem := range r.Sync.ColumnsToExclude {
 			name1 := new(string)
 			if !columnsToExcludeItem.Name.IsUnknown() && !columnsToExcludeItem.Name.IsNull() {
@@ -79,16 +78,16 @@ func (r *SynchronizationResourceModel) ToCreateSDKType() *shared.CreateSynchroni
 			} else {
 				executionType = nil
 			}
-			typeVar := new(string)
+			type1 := new(string)
 			if !r.Sync.FullLoadScheduler.Type.IsUnknown() && !r.Sync.FullLoadScheduler.Type.IsNull() {
-				*typeVar = r.Sync.FullLoadScheduler.Type.ValueString()
+				*type1 = r.Sync.FullLoadScheduler.Type.ValueString()
 			} else {
-				typeVar = nil
+				type1 = nil
 			}
 			fullLoadScheduler = &shared.CreateSynchronizationInputSyncFullLoadScheduler{
 				BeginDate:     beginDate,
 				ExecutionType: executionType,
-				Type:          typeVar,
+				Type:          type1,
 			}
 		}
 		mirrorTable := r.Sync.MirrorTable.ValueString()
@@ -113,15 +112,15 @@ func (r *SynchronizationResourceModel) ToCreateSDKType() *shared.CreateSynchroni
 			} else {
 				beginDate1 = nil
 			}
-			typeVar1 := new(string)
+			type2 := new(string)
 			if !r.Sync.Scheduler.Type.IsUnknown() && !r.Sync.Scheduler.Type.IsNull() {
-				*typeVar1 = r.Sync.Scheduler.Type.ValueString()
+				*type2 = r.Sync.Scheduler.Type.ValueString()
 			} else {
-				typeVar1 = nil
+				type2 = nil
 			}
 			scheduler = &shared.CreateSynchronizationInputSyncScheduler{
 				BeginDate: beginDate1,
-				Type:      typeVar1,
+				Type:      type2,
 			}
 		}
 		schedulerPriority := new(string)
@@ -183,16 +182,30 @@ func (r *SynchronizationResourceModel) ToDeleteSDKType() *shared.CreateSynchroni
 }
 
 func (r *SynchronizationResourceModel) RefreshFromGetResponse(resp *shared.Synchronization) {
-	if resp.Description != nil {
-		r.Description = types.StringValue(*resp.Description)
-	} else {
-		r.Description = types.StringNull()
-	}
 	r.ID = types.Int64Value(resp.ID)
-	r.Image = types.StringValue(resp.Image)
-	r.Name = types.StringValue(resp.Name)
-	r.Price = types.NumberValue(big.NewFloat(float64(resp.Price)))
-	r.Teaser = types.StringValue(resp.Teaser)
+	if r.Sync == nil {
+		r.Sync = &CreateSynchronizationInputSync{}
+	}
+	if resp.Sync == nil {
+		r.Sync = nil
+	} else {
+		r.Sync = &CreateSynchronizationInputSync{}
+		if resp.Sync.ID != nil {
+			r.Sync.ID = types.Int64Value(*resp.Sync.ID)
+		} else {
+			r.Sync.ID = types.Int64Null()
+		}
+		if resp.Sync.Name != nil {
+			r.Sync.Name = types.StringValue(*resp.Sync.Name)
+		} else {
+			r.Sync.Name = types.StringNull()
+		}
+		if resp.Sync.Table != nil {
+			r.Sync.Table = types.StringValue(*resp.Sync.Table)
+		} else {
+			r.Sync.Table = types.StringNull()
+		}
+	}
 }
 
 func (r *SynchronizationResourceModel) RefreshFromCreateResponse(resp *shared.Synchronization) {

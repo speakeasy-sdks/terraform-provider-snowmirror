@@ -1,0 +1,219 @@
+openapi: 3.0.3
+info:
+  title: SnowMirror API
+  description: Example Hashicups through Speakeasy
+  contact:
+    name: ' GuideVision'
+    url: 'https://www.snow-mirror.com/doc/RestApiGuide.html'
+  version: 0.0.1
+servers:
+  - url: 'http://localhost:9090'
+    description: local
+security:
+  - basic-authentication: []
+externalDocs:
+  url: 'https://www.snow-mirror.com/doc/RestApiGuide.html'
+  description: The Speakeasy Platform Documentation
+tags:
+  - name: Synchronization
+    description: Synchronization
+    externalDocs:
+      description: ''
+      url: 'https://www.snow-mirror.com/doc/RestApiGuide.html#section-api-sync'
+paths:
+  /api/v1/synchronization:
+    post:
+      summary: Create a synchronization
+      description: Returns a list of all synchronizations.
+      x-speakeasy-entity-operation: Synchronization#create
+      operationId: createSynchronization
+      requestBody:
+        description: A JSON representation of the Api to upsert
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSynchronizationInput'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Synchronization'
+          description: OK
+      tags:
+        - Synchronization
+  '/api/v1/synchronization/{id}':
+    get:
+      summary: Get an synchronizations
+      description: Returns a list of all synchronizations.
+      x-speakeasy-entity-operation: Synchronization#get
+      operationId: getSynchronization
+      parameters:
+        - description: The ID of the order get.
+          in: path
+          name: id
+          x-speakeasy-match: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Synchronization'
+          description: OK
+      tags:
+        - Synchronization
+    put:
+      summary: Update a synchronization
+      description: Returns a list of all synchronizations.
+      x-speakeasy-entity-operation: Synchronization#update
+      operationId: updateSynchronization
+      parameters:
+        - description: The id of the sync.
+          in: path
+          name: id
+          x-speakeasy-match: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: A JSON representation of the Api to upsert
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSynchronizationInput'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Synchronization'
+          description: OK
+      tags:
+        - Synchronization
+    delete:
+      summary: Delete a sync
+      description: Delete a synchronizations.
+      x-speakeasy-entity-operation: Synchronization#delete
+      operationId: deleteSynchronization
+      parameters:
+        - description: The ID of the order to delete.
+          in: path
+          name: id
+          x-speakeasy-match: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+      tags:
+        - Synchronization
+components:
+  schemas:
+    CreateSynchronizationInput:
+      description: An input object to creating a Synchronization
+      x-speakeasy-entity: Synchronization
+      type: object
+      properties:
+        sync:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Display name of the synchronization.
+            table:
+              type: string
+              description: Name of the table in ServiceNow.
+            view:
+              type: string
+              description: Name of the view in ServiceNow.
+            mirrorTable:
+              type: string
+              description: Name of the table in mirror database where the data will be migrated.
+            columns:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+            columnsToExclude:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+            allowInheritedColumns:
+              type: boolean
+              description: SnowMirror checks if columns exist in ServiceNow. If this flag is set to true,
+            referenceFieldType:
+              type: string
+              description: Defines how to synchronize reference field types.
+            autoSchemaUpdate:
+              type: boolean
+            encodedQuery:
+              type: string
+            deleteStrategy:
+              type: string
+            active:
+              type: boolean
+            runImmediately:
+              type: boolean
+            scheduler:
+              type: object
+              properties:
+                type:
+                  type: string
+                beginDate:
+                  type: string
+            fullLoadScheduler:
+              type: object
+              properties:
+                executionType:
+                  type: string
+                type:
+                  type: string
+                beginDate:
+                  type: string
+            schedulerPriority:
+              type: string                            
+          required:
+            - name
+            - mirrorTable
+      x-stoplight:
+        id: d04afae9c8b4d
+    Synchronization:
+      description: An order helps you make coffee
+      x-speakeasy-entity: Synchronization
+      type: object
+      properties:
+        id:
+          type: integer
+          description: fix easyspeak
+        sync:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Display name of the synchronization.
+            table:
+              type: string
+              description: Name of the table in ServiceNow.
+            id:
+              type: integer
+              description: Sync ID
+      required:
+        - id
+        - name
+      x-stoplight:
+        id: b02cbc78ee913
+  securitySchemes:
+    basic-authentication:
+      type: http
+      scheme: basic

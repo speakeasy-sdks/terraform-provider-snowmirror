@@ -121,7 +121,7 @@ func New(opts ...SDKOption) *Snowmirror {
 			Language:          "terraform",
 			OpenAPIDocVersion: "0.0.1",
 			SDKVersion:        "0.1.1",
-			GenVersion:        "2.84.1",
+			GenVersion:        "2.62.1",
 		},
 	}
 	for _, opt := range opts {

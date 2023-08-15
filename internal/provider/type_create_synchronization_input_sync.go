@@ -13,6 +13,7 @@ type CreateSynchronizationInputSync struct {
 	DeleteStrategy        types.String                                     `tfsdk:"delete_strategy"`
 	EncodedQuery          types.String                                     `tfsdk:"encoded_query"`
 	FullLoadScheduler     *CreateSynchronizationInputSyncFullLoadScheduler `tfsdk:"full_load_scheduler"`
+	ID                    types.Int64                                      `tfsdk:"id"`
 	MirrorTable           types.String                                     `tfsdk:"mirror_table"`
 	Name                  types.String                                     `tfsdk:"name"`
 	ReferenceFieldType    types.String                                     `tfsdk:"reference_field_type"`
