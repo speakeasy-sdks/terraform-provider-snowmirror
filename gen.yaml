@@ -1,4 +1,9 @@
 configVersion: 1.0.0
+management:
+  docChecksum: d9693f59197fb56c06bcfaef6c17251f
+  docVersion: 0.0.1
+  speakeasyVersion: 1.72.0
+  generationVersion: 2.84.1
 generation:
   comments:
     disableComments: false
@@ -7,7 +12,13 @@ generation:
   sdkClassName: snowmirror
   singleTagPerOp: false
   tagNamespacingDisabled: false
+features:
+  terraform:
+    core: 2.83.0
+    globalSecurity: 2.81.1
+    globalServerURLs: 2.82.0
+    includes: 2.81.1
 terraform:
-  version: 0.0.1
+  version: 0.1.0
   author: mikevdberge
   packageName: snowmirror
