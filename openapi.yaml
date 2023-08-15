@@ -75,7 +75,6 @@ paths:
         - description: The id of the sync.
           in: path
           name: id
-          x-speakeasy-match: id
           required: true
           schema:
             type: integer
@@ -115,102 +114,105 @@ paths:
         - Synchronization
 components:
   schemas:
+    CreateSynchronizationSyncInput:
+      x-speakeasy-entity: Synchronization
+      type: object
+      properties:
+        name:
+          type: string
+          description: Display name of the synchronization.
+        table:
+          type: string
+          description: Name of the table in ServiceNow.
+        view:
+          type: string
+          description: Name of the view in ServiceNow.
+        mirrorTable:
+          type: string
+          description: Name of the table in mirror database where the data will be migrated.
+        columns:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+        columnsToExclude:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+        allowInheritedColumns:
+          type: boolean
+          description: SnowMirror checks if columns exist in ServiceNow. If this flag is set to true,
+        referenceFieldType:
+          type: string
+          description: Defines how to synchronize reference field types.
+        autoSchemaUpdate:
+          type: boolean
+        encodedQuery:
+          type: string
+        deleteStrategy:
+          type: string
+        active:
+          type: boolean
+        runImmediately:
+          type: boolean
+        scheduler:
+          type: object
+          properties:
+            type:
+              type: string
+            beginDate:
+              type: string
+        fullLoadScheduler:
+          type: object
+          properties:
+            executionType:
+              type: string
+            type:
+              type: string
+            beginDate:
+              type: string
+        schedulerPriority:
+          type: string
+      required:
+        - name
+        - mirrorTable
     CreateSynchronizationInput:
       description: An input object to creating a Synchronization
-      x-speakeasy-entity: Synchronization
       type: object
       properties:
         sync:
-          type: object
-          properties:
-            name:
-              type: string
-              description: Display name of the synchronization.
-            table:
-              type: string
-              description: Name of the table in ServiceNow.
-            view:
-              type: string
-              description: Name of the view in ServiceNow.
-            mirrorTable:
-              type: string
-              description: Name of the table in mirror database where the data will be migrated.
-            columns:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-            columnsToExclude:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-            allowInheritedColumns:
-              type: boolean
-              description: SnowMirror checks if columns exist in ServiceNow. If this flag is set to true,
-            referenceFieldType:
-              type: string
-              description: Defines how to synchronize reference field types.
-            autoSchemaUpdate:
-              type: boolean
-            encodedQuery:
-              type: string
-            deleteStrategy:
-              type: string
-            active:
-              type: boolean
-            runImmediately:
-              type: boolean
-            scheduler:
-              type: object
-              properties:
-                type:
-                  type: string
-                beginDate:
-                  type: string
-            fullLoadScheduler:
-              type: object
-              properties:
-                executionType:
-                  type: string
-                type:
-                  type: string
-                beginDate:
-                  type: string
-            schedulerPriority:
-              type: string                            
-          required:
-            - name
-            - mirrorTable
+          "$ref": "#/components/schemas/CreateSynchronizationSyncInput"
       x-stoplight:
         id: d04afae9c8b4d
-    Synchronization:
-      description: An order helps you make coffee
-      x-speakeasy-entity: Synchronization
+    SyncronizationSyncOutput:
       type: object
+      x-speakeasy-entity: Synchronization
       properties:
+        name:
+          type: string
+          description: Display name of the synchronization.
+        table:
+          type: string
+          description: Name of the table in ServiceNow.
         id:
           type: integer
-          description: fix easyspeak
-        sync:
-          type: object
-          properties:
-            name:
-              type: string
-              description: Display name of the synchronization.
-            table:
-              type: string
-              description: Name of the table in ServiceNow.
-            id:
-              type: integer
-              description: Sync ID
+          description: Sync ID
       required:
         - id
         - name
+    Synchronization:
+      description: An order helps you make coffee
+      type: object
+      properties:
+        sync:
+          "$ref": "#/components/schemas/SyncronizationSyncOutput"
+      required:
+        - sync
       x-stoplight:
         id: b02cbc78ee913
   securitySchemes:

@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"snowmirror/internal/sdk"
+	"snowmirror/internal/sdk/pkg/models/shared"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -30,8 +31,23 @@ type SynchronizationResource struct {
 
 // SynchronizationResourceModel describes the resource data model.
 type SynchronizationResourceModel struct {
-	ID   types.Int64                     `tfsdk:"id"`
-	Sync *CreateSynchronizationInputSync `tfsdk:"sync"`
+	Active                types.Bool                                       `tfsdk:"active"`
+	AllowInheritedColumns types.Bool                                       `tfsdk:"allow_inherited_columns"`
+	AutoSchemaUpdate      types.Bool                                       `tfsdk:"auto_schema_update"`
+	Columns               []CreateSynchronizationSyncInputColumns          `tfsdk:"columns"`
+	ColumnsToExclude      []CreateSynchronizationSyncInputColumns          `tfsdk:"columns_to_exclude"`
+	DeleteStrategy        types.String                                     `tfsdk:"delete_strategy"`
+	EncodedQuery          types.String                                     `tfsdk:"encoded_query"`
+	FullLoadScheduler     *CreateSynchronizationSyncInputFullLoadScheduler `tfsdk:"full_load_scheduler"`
+	ID                    types.Int64                                      `tfsdk:"id"`
+	MirrorTable           types.String                                     `tfsdk:"mirror_table"`
+	Name                  types.String                                     `tfsdk:"name"`
+	ReferenceFieldType    types.String                                     `tfsdk:"reference_field_type"`
+	RunImmediately        types.Bool                                       `tfsdk:"run_immediately"`
+	Scheduler             *CreateSynchronizationSyncInputScheduler         `tfsdk:"scheduler"`
+	SchedulerPriority     types.String                                     `tfsdk:"scheduler_priority"`
+	Table                 types.String                                     `tfsdk:"table"`
+	View                  types.String                                     `tfsdk:"view"`
 }
 
 func (r *SynchronizationResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -43,107 +59,97 @@ func (r *SynchronizationResource) Schema(ctx context.Context, req resource.Schem
 		MarkdownDescription: "Synchronization Resource",
 
 		Attributes: map[string]schema.Attribute{
-			"id": schema.Int64Attribute{
-				Computed:    true,
-				Description: `fix easyspeak`,
-			},
-			"sync": schema.SingleNestedAttribute{
-				Computed: true,
+			"active": schema.BoolAttribute{
 				Optional: true,
-				Attributes: map[string]schema.Attribute{
-					"active": schema.BoolAttribute{
-						Optional: true,
-					},
-					"allow_inherited_columns": schema.BoolAttribute{
-						Optional:    true,
-						Description: `SnowMirror checks if columns exist in ServiceNow. If this flag is set to true,`,
-					},
-					"auto_schema_update": schema.BoolAttribute{
-						Optional: true,
-					},
-					"columns": schema.ListNestedAttribute{
-						Optional: true,
-						NestedObject: schema.NestedAttributeObject{
-							Attributes: map[string]schema.Attribute{
-								"name": schema.StringAttribute{
-									Optional: true,
-								},
-							},
+			},
+			"allow_inherited_columns": schema.BoolAttribute{
+				Optional:    true,
+				Description: `SnowMirror checks if columns exist in ServiceNow. If this flag is set to true,`,
+			},
+			"auto_schema_update": schema.BoolAttribute{
+				Optional: true,
+			},
+			"columns": schema.ListNestedAttribute{
+				Optional: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							Optional: true,
 						},
-					},
-					"columns_to_exclude": schema.ListNestedAttribute{
-						Optional: true,
-						NestedObject: schema.NestedAttributeObject{
-							Attributes: map[string]schema.Attribute{
-								"name": schema.StringAttribute{
-									Optional: true,
-								},
-							},
-						},
-					},
-					"delete_strategy": schema.StringAttribute{
-						Optional: true,
-					},
-					"encoded_query": schema.StringAttribute{
-						Optional: true,
-					},
-					"full_load_scheduler": schema.SingleNestedAttribute{
-						Optional: true,
-						Attributes: map[string]schema.Attribute{
-							"begin_date": schema.StringAttribute{
-								Optional: true,
-							},
-							"execution_type": schema.StringAttribute{
-								Optional: true,
-							},
-							"type": schema.StringAttribute{
-								Optional: true,
-							},
-						},
-					},
-					"id": schema.Int64Attribute{
-						Computed:    true,
-						Description: `Sync ID`,
-					},
-					"mirror_table": schema.StringAttribute{
-						Required:    true,
-						Description: `Name of the table in mirror database where the data will be migrated.`,
-					},
-					"name": schema.StringAttribute{
-						Required:    true,
-						Description: `Display name of the synchronization.`,
-					},
-					"reference_field_type": schema.StringAttribute{
-						Optional:    true,
-						Description: `Defines how to synchronize reference field types.`,
-					},
-					"run_immediately": schema.BoolAttribute{
-						Optional: true,
-					},
-					"scheduler": schema.SingleNestedAttribute{
-						Optional: true,
-						Attributes: map[string]schema.Attribute{
-							"begin_date": schema.StringAttribute{
-								Optional: true,
-							},
-							"type": schema.StringAttribute{
-								Optional: true,
-							},
-						},
-					},
-					"scheduler_priority": schema.StringAttribute{
-						Optional: true,
-					},
-					"table": schema.StringAttribute{
-						Computed:    true,
-						Optional:    true,
-						Description: `Name of the table in ServiceNow.`,
-					},
-					"view": schema.StringAttribute{
-						Optional:    true,
-						Description: `Name of the view in ServiceNow.`,
 					},
 				},
+			},
+			"columns_to_exclude": schema.ListNestedAttribute{
+				Optional: true,
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"name": schema.StringAttribute{
+							Optional: true,
+						},
+					},
+				},
+			},
+			"delete_strategy": schema.StringAttribute{
+				Optional: true,
+			},
+			"encoded_query": schema.StringAttribute{
+				Optional: true,
+			},
+			"full_load_scheduler": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"begin_date": schema.StringAttribute{
+						Optional: true,
+					},
+					"execution_type": schema.StringAttribute{
+						Optional: true,
+					},
+					"type": schema.StringAttribute{
+						Optional: true,
+					},
+				},
+			},
+			"id": schema.Int64Attribute{
+				Computed:    true,
+				Description: `Sync ID`,
+			},
+			"mirror_table": schema.StringAttribute{
+				Required:    true,
+				Description: `Name of the table in mirror database where the data will be migrated.`,
+			},
+			"name": schema.StringAttribute{
+				Required:    true,
+				Description: `Display name of the synchronization.`,
+			},
+			"reference_field_type": schema.StringAttribute{
+				Optional:    true,
+				Description: `Defines how to synchronize reference field types.`,
+			},
+			"run_immediately": schema.BoolAttribute{
+				Optional: true,
+			},
+			"scheduler": schema.SingleNestedAttribute{
+				Optional: true,
+				Attributes: map[string]schema.Attribute{
+					"begin_date": schema.StringAttribute{
+						Optional: true,
+					},
+					"type": schema.StringAttribute{
+						Optional: true,
+					},
+				},
+			},
+			"scheduler_priority": schema.StringAttribute{
+				Optional: true,
+			},
+			"table": schema.StringAttribute{
+				Computed:    true,
+				Optional:    true,
+				Description: `Name of the table in ServiceNow.`,
+			},
+			"view": schema.StringAttribute{
+				Optional:    true,
+				Description: `Name of the view in ServiceNow.`,
 			},
 		},
 	}
@@ -187,7 +193,10 @@ func (r *SynchronizationResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	request := *data.ToCreateSDKType()
+	sync := data.ToCreateSDKType()
+	request := shared.CreateSynchronizationInput{
+		Sync: sync,
+	}
 	res, err := r.client.Synchronization.CreateSynchronization(ctx, request)
 	if err != nil {
 		resp.Diagnostics.AddError("failure to invoke API", err.Error())
@@ -201,11 +210,11 @@ func (r *SynchronizationResource) Create(ctx context.Context, req resource.Creat
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if res.Synchronization == nil {
+	if res.Synchronization.Sync == nil {
 		resp.Diagnostics.AddError("unexpected response from API. No response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromCreateResponse(res.Synchronization)
+	data.RefreshFromCreateResponse(res.Synchronization.Sync)
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -246,11 +255,11 @@ func (r *SynchronizationResource) Read(ctx context.Context, req resource.ReadReq
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if res.Synchronization == nil {
+	if res.Synchronization.Sync == nil {
 		resp.Diagnostics.AddError("unexpected response from API. No response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromGetResponse(res.Synchronization)
+	data.RefreshFromGetResponse(res.Synchronization.Sync)
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -263,7 +272,10 @@ func (r *SynchronizationResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	createSynchronizationInput := *data.ToUpdateSDKType()
+	sync := data.ToUpdateSDKType()
+	createSynchronizationInput := shared.CreateSynchronizationInput{
+		Sync: sync,
+	}
 	id := data.ID.ValueInt64()
 	request := operations.UpdateSynchronizationRequest{
 		CreateSynchronizationInput: createSynchronizationInput,
@@ -282,11 +294,11 @@ func (r *SynchronizationResource) Update(ctx context.Context, req resource.Updat
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
-	if res.Synchronization == nil {
+	if res.Synchronization.Sync == nil {
 		resp.Diagnostics.AddError("unexpected response from API. No response body", debugResponse(res.RawResponse))
 		return
 	}
-	data.RefreshFromUpdateResponse(res.Synchronization)
+	data.RefreshFromUpdateResponse(res.Synchronization.Sync)
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

@@ -1,9 +1,8 @@
 internal/sdk/synchronization.go
 internal/sdk/sdk.go
-internal/provider/type_create_synchronization_input_sync_columns.go
-internal/provider/type_create_synchronization_input_sync_full_load_scheduler.go
-internal/provider/type_create_synchronization_input_sync_scheduler.go
-internal/provider/type_create_synchronization_input_sync.go
+internal/provider/type_create_synchronization_sync_input_columns.go
+internal/provider/type_create_synchronization_sync_input_full_load_scheduler.go
+internal/provider/type_create_synchronization_sync_input_scheduler.go
 examples/README.md
 go.mod
 go.sum
@@ -56,7 +55,9 @@ internal/sdk/pkg/models/operations/deletesynchronization.go
 internal/sdk/pkg/models/operations/getsynchronization.go
 internal/sdk/pkg/models/operations/updatesynchronization.go
 internal/sdk/pkg/models/shared/synchronization.go
+internal/sdk/pkg/models/shared/syncronizationsyncoutput.go
 internal/sdk/pkg/models/shared/createsynchronizationinput.go
+internal/sdk/pkg/models/shared/createsynchronizationsyncinput.go
 internal/sdk/pkg/models/shared/security.go
 USAGE.md
 internal/provider/provider.go

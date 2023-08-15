@@ -2,18 +2,7 @@
 
 package shared
 
-type SynchronizationSync struct {
-	// Sync ID
-	ID *int64 `json:"id,omitempty"`
-	// Display name of the synchronization.
-	Name *string `json:"name,omitempty"`
-	// Name of the table in ServiceNow.
-	Table *string `json:"table,omitempty"`
-}
-
 // Synchronization - An order helps you make coffee
 type Synchronization struct {
-	// fix easyspeak
-	ID   int64                `json:"id"`
-	Sync *SynchronizationSync `json:"sync,omitempty"`
+	Sync *SyncronizationSyncOutput `json:"sync,omitempty"`
 }

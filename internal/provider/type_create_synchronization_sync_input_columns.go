@@ -4,7 +4,6 @@ package provider
 
 import "github.com/hashicorp/terraform-plugin-framework/types"
 
-type CreateSynchronizationInputSyncScheduler struct {
-	BeginDate types.String `tfsdk:"begin_date"`
-	Type      types.String `tfsdk:"type"`
+type CreateSynchronizationSyncInputColumns struct {
+	Name types.String `tfsdk:"name"`
 }

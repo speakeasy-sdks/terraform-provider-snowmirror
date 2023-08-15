@@ -7,211 +7,188 @@ import (
 	"snowmirror/internal/sdk/pkg/models/shared"
 )
 
-func (r *SynchronizationResourceModel) ToCreateSDKType() *shared.CreateSynchronizationInput {
-	var sync *shared.CreateSynchronizationInputSync
-	if r.Sync != nil {
-		active := new(bool)
-		if !r.Sync.Active.IsUnknown() && !r.Sync.Active.IsNull() {
-			*active = r.Sync.Active.ValueBool()
+func (r *SynchronizationResourceModel) ToCreateSDKType() *shared.CreateSynchronizationSyncInput {
+	active := new(bool)
+	if !r.Active.IsUnknown() && !r.Active.IsNull() {
+		*active = r.Active.ValueBool()
+	} else {
+		active = nil
+	}
+	allowInheritedColumns := new(bool)
+	if !r.AllowInheritedColumns.IsUnknown() && !r.AllowInheritedColumns.IsNull() {
+		*allowInheritedColumns = r.AllowInheritedColumns.ValueBool()
+	} else {
+		allowInheritedColumns = nil
+	}
+	autoSchemaUpdate := new(bool)
+	if !r.AutoSchemaUpdate.IsUnknown() && !r.AutoSchemaUpdate.IsNull() {
+		*autoSchemaUpdate = r.AutoSchemaUpdate.ValueBool()
+	} else {
+		autoSchemaUpdate = nil
+	}
+	columns := make([]shared.CreateSynchronizationSyncInputColumns, 0)
+	for _, columnsItem := range r.Columns {
+		name := new(string)
+		if !columnsItem.Name.IsUnknown() && !columnsItem.Name.IsNull() {
+			*name = columnsItem.Name.ValueString()
 		} else {
-			active = nil
+			name = nil
 		}
-		allowInheritedColumns := new(bool)
-		if !r.Sync.AllowInheritedColumns.IsUnknown() && !r.Sync.AllowInheritedColumns.IsNull() {
-			*allowInheritedColumns = r.Sync.AllowInheritedColumns.ValueBool()
+		columns = append(columns, shared.CreateSynchronizationSyncInputColumns{
+			Name: name,
+		})
+	}
+	columnsToExclude := make([]shared.CreateSynchronizationSyncInputColumnsToExclude, 0)
+	for _, columnsToExcludeItem := range r.ColumnsToExclude {
+		name1 := new(string)
+		if !columnsToExcludeItem.Name.IsUnknown() && !columnsToExcludeItem.Name.IsNull() {
+			*name1 = columnsToExcludeItem.Name.ValueString()
 		} else {
-			allowInheritedColumns = nil
+			name1 = nil
 		}
-		autoSchemaUpdate := new(bool)
-		if !r.Sync.AutoSchemaUpdate.IsUnknown() && !r.Sync.AutoSchemaUpdate.IsNull() {
-			*autoSchemaUpdate = r.Sync.AutoSchemaUpdate.ValueBool()
+		columnsToExclude = append(columnsToExclude, shared.CreateSynchronizationSyncInputColumnsToExclude{
+			Name: name1,
+		})
+	}
+	deleteStrategy := new(string)
+	if !r.DeleteStrategy.IsUnknown() && !r.DeleteStrategy.IsNull() {
+		*deleteStrategy = r.DeleteStrategy.ValueString()
+	} else {
+		deleteStrategy = nil
+	}
+	encodedQuery := new(string)
+	if !r.EncodedQuery.IsUnknown() && !r.EncodedQuery.IsNull() {
+		*encodedQuery = r.EncodedQuery.ValueString()
+	} else {
+		encodedQuery = nil
+	}
+	var fullLoadScheduler *shared.CreateSynchronizationSyncInputFullLoadScheduler
+	if r.FullLoadScheduler != nil {
+		beginDate := new(string)
+		if !r.FullLoadScheduler.BeginDate.IsUnknown() && !r.FullLoadScheduler.BeginDate.IsNull() {
+			*beginDate = r.FullLoadScheduler.BeginDate.ValueString()
 		} else {
-			autoSchemaUpdate = nil
+			beginDate = nil
 		}
-		columns := make([]shared.CreateSynchronizationInputSyncColumns, 0)
-		for _, columnsItem := range r.Sync.Columns {
-			name := new(string)
-			if !columnsItem.Name.IsUnknown() && !columnsItem.Name.IsNull() {
-				*name = columnsItem.Name.ValueString()
-			} else {
-				name = nil
-			}
-			columns = append(columns, shared.CreateSynchronizationInputSyncColumns{
-				Name: name,
-			})
-		}
-		columnsToExclude := make([]shared.CreateSynchronizationInputSyncColumnsToExclude, 0)
-		for _, columnsToExcludeItem := range r.Sync.ColumnsToExclude {
-			name1 := new(string)
-			if !columnsToExcludeItem.Name.IsUnknown() && !columnsToExcludeItem.Name.IsNull() {
-				*name1 = columnsToExcludeItem.Name.ValueString()
-			} else {
-				name1 = nil
-			}
-			columnsToExclude = append(columnsToExclude, shared.CreateSynchronizationInputSyncColumnsToExclude{
-				Name: name1,
-			})
-		}
-		deleteStrategy := new(string)
-		if !r.Sync.DeleteStrategy.IsUnknown() && !r.Sync.DeleteStrategy.IsNull() {
-			*deleteStrategy = r.Sync.DeleteStrategy.ValueString()
+		executionType := new(string)
+		if !r.FullLoadScheduler.ExecutionType.IsUnknown() && !r.FullLoadScheduler.ExecutionType.IsNull() {
+			*executionType = r.FullLoadScheduler.ExecutionType.ValueString()
 		} else {
-			deleteStrategy = nil
+			executionType = nil
 		}
-		encodedQuery := new(string)
-		if !r.Sync.EncodedQuery.IsUnknown() && !r.Sync.EncodedQuery.IsNull() {
-			*encodedQuery = r.Sync.EncodedQuery.ValueString()
+		type1 := new(string)
+		if !r.FullLoadScheduler.Type.IsUnknown() && !r.FullLoadScheduler.Type.IsNull() {
+			*type1 = r.FullLoadScheduler.Type.ValueString()
 		} else {
-			encodedQuery = nil
+			type1 = nil
 		}
-		var fullLoadScheduler *shared.CreateSynchronizationInputSyncFullLoadScheduler
-		if r.Sync.FullLoadScheduler != nil {
-			beginDate := new(string)
-			if !r.Sync.FullLoadScheduler.BeginDate.IsUnknown() && !r.Sync.FullLoadScheduler.BeginDate.IsNull() {
-				*beginDate = r.Sync.FullLoadScheduler.BeginDate.ValueString()
-			} else {
-				beginDate = nil
-			}
-			executionType := new(string)
-			if !r.Sync.FullLoadScheduler.ExecutionType.IsUnknown() && !r.Sync.FullLoadScheduler.ExecutionType.IsNull() {
-				*executionType = r.Sync.FullLoadScheduler.ExecutionType.ValueString()
-			} else {
-				executionType = nil
-			}
-			type1 := new(string)
-			if !r.Sync.FullLoadScheduler.Type.IsUnknown() && !r.Sync.FullLoadScheduler.Type.IsNull() {
-				*type1 = r.Sync.FullLoadScheduler.Type.ValueString()
-			} else {
-				type1 = nil
-			}
-			fullLoadScheduler = &shared.CreateSynchronizationInputSyncFullLoadScheduler{
-				BeginDate:     beginDate,
-				ExecutionType: executionType,
-				Type:          type1,
-			}
-		}
-		mirrorTable := r.Sync.MirrorTable.ValueString()
-		name2 := r.Sync.Name.ValueString()
-		referenceFieldType := new(string)
-		if !r.Sync.ReferenceFieldType.IsUnknown() && !r.Sync.ReferenceFieldType.IsNull() {
-			*referenceFieldType = r.Sync.ReferenceFieldType.ValueString()
-		} else {
-			referenceFieldType = nil
-		}
-		runImmediately := new(bool)
-		if !r.Sync.RunImmediately.IsUnknown() && !r.Sync.RunImmediately.IsNull() {
-			*runImmediately = r.Sync.RunImmediately.ValueBool()
-		} else {
-			runImmediately = nil
-		}
-		var scheduler *shared.CreateSynchronizationInputSyncScheduler
-		if r.Sync.Scheduler != nil {
-			beginDate1 := new(string)
-			if !r.Sync.Scheduler.BeginDate.IsUnknown() && !r.Sync.Scheduler.BeginDate.IsNull() {
-				*beginDate1 = r.Sync.Scheduler.BeginDate.ValueString()
-			} else {
-				beginDate1 = nil
-			}
-			type2 := new(string)
-			if !r.Sync.Scheduler.Type.IsUnknown() && !r.Sync.Scheduler.Type.IsNull() {
-				*type2 = r.Sync.Scheduler.Type.ValueString()
-			} else {
-				type2 = nil
-			}
-			scheduler = &shared.CreateSynchronizationInputSyncScheduler{
-				BeginDate: beginDate1,
-				Type:      type2,
-			}
-		}
-		schedulerPriority := new(string)
-		if !r.Sync.SchedulerPriority.IsUnknown() && !r.Sync.SchedulerPriority.IsNull() {
-			*schedulerPriority = r.Sync.SchedulerPriority.ValueString()
-		} else {
-			schedulerPriority = nil
-		}
-		table := new(string)
-		if !r.Sync.Table.IsUnknown() && !r.Sync.Table.IsNull() {
-			*table = r.Sync.Table.ValueString()
-		} else {
-			table = nil
-		}
-		view := new(string)
-		if !r.Sync.View.IsUnknown() && !r.Sync.View.IsNull() {
-			*view = r.Sync.View.ValueString()
-		} else {
-			view = nil
-		}
-		sync = &shared.CreateSynchronizationInputSync{
-			Active:                active,
-			AllowInheritedColumns: allowInheritedColumns,
-			AutoSchemaUpdate:      autoSchemaUpdate,
-			Columns:               columns,
-			ColumnsToExclude:      columnsToExclude,
-			DeleteStrategy:        deleteStrategy,
-			EncodedQuery:          encodedQuery,
-			FullLoadScheduler:     fullLoadScheduler,
-			MirrorTable:           mirrorTable,
-			Name:                  name2,
-			ReferenceFieldType:    referenceFieldType,
-			RunImmediately:        runImmediately,
-			Scheduler:             scheduler,
-			SchedulerPriority:     schedulerPriority,
-			Table:                 table,
-			View:                  view,
+		fullLoadScheduler = &shared.CreateSynchronizationSyncInputFullLoadScheduler{
+			BeginDate:     beginDate,
+			ExecutionType: executionType,
+			Type:          type1,
 		}
 	}
-	out := shared.CreateSynchronizationInput{
-		Sync: sync,
+	mirrorTable := r.MirrorTable.ValueString()
+	name2 := r.Name.ValueString()
+	referenceFieldType := new(string)
+	if !r.ReferenceFieldType.IsUnknown() && !r.ReferenceFieldType.IsNull() {
+		*referenceFieldType = r.ReferenceFieldType.ValueString()
+	} else {
+		referenceFieldType = nil
+	}
+	runImmediately := new(bool)
+	if !r.RunImmediately.IsUnknown() && !r.RunImmediately.IsNull() {
+		*runImmediately = r.RunImmediately.ValueBool()
+	} else {
+		runImmediately = nil
+	}
+	var scheduler *shared.CreateSynchronizationSyncInputScheduler
+	if r.Scheduler != nil {
+		beginDate1 := new(string)
+		if !r.Scheduler.BeginDate.IsUnknown() && !r.Scheduler.BeginDate.IsNull() {
+			*beginDate1 = r.Scheduler.BeginDate.ValueString()
+		} else {
+			beginDate1 = nil
+		}
+		type2 := new(string)
+		if !r.Scheduler.Type.IsUnknown() && !r.Scheduler.Type.IsNull() {
+			*type2 = r.Scheduler.Type.ValueString()
+		} else {
+			type2 = nil
+		}
+		scheduler = &shared.CreateSynchronizationSyncInputScheduler{
+			BeginDate: beginDate1,
+			Type:      type2,
+		}
+	}
+	schedulerPriority := new(string)
+	if !r.SchedulerPriority.IsUnknown() && !r.SchedulerPriority.IsNull() {
+		*schedulerPriority = r.SchedulerPriority.ValueString()
+	} else {
+		schedulerPriority = nil
+	}
+	table := new(string)
+	if !r.Table.IsUnknown() && !r.Table.IsNull() {
+		*table = r.Table.ValueString()
+	} else {
+		table = nil
+	}
+	view := new(string)
+	if !r.View.IsUnknown() && !r.View.IsNull() {
+		*view = r.View.ValueString()
+	} else {
+		view = nil
+	}
+	out := shared.CreateSynchronizationSyncInput{
+		Active:                active,
+		AllowInheritedColumns: allowInheritedColumns,
+		AutoSchemaUpdate:      autoSchemaUpdate,
+		Columns:               columns,
+		ColumnsToExclude:      columnsToExclude,
+		DeleteStrategy:        deleteStrategy,
+		EncodedQuery:          encodedQuery,
+		FullLoadScheduler:     fullLoadScheduler,
+		MirrorTable:           mirrorTable,
+		Name:                  name2,
+		ReferenceFieldType:    referenceFieldType,
+		RunImmediately:        runImmediately,
+		Scheduler:             scheduler,
+		SchedulerPriority:     schedulerPriority,
+		Table:                 table,
+		View:                  view,
 	}
 	return &out
 }
 
-func (r *SynchronizationResourceModel) ToGetSDKType() *shared.CreateSynchronizationInput {
+func (r *SynchronizationResourceModel) ToGetSDKType() *shared.CreateSynchronizationSyncInput {
 	out := r.ToCreateSDKType()
 	return out
 }
 
-func (r *SynchronizationResourceModel) ToUpdateSDKType() *shared.CreateSynchronizationInput {
+func (r *SynchronizationResourceModel) ToUpdateSDKType() *shared.CreateSynchronizationSyncInput {
 	out := r.ToCreateSDKType()
 	return out
 }
 
-func (r *SynchronizationResourceModel) ToDeleteSDKType() *shared.CreateSynchronizationInput {
+func (r *SynchronizationResourceModel) ToDeleteSDKType() *shared.CreateSynchronizationSyncInput {
 	out := r.ToCreateSDKType()
 	return out
 }
 
-func (r *SynchronizationResourceModel) RefreshFromGetResponse(resp *shared.Synchronization) {
+func (r *SynchronizationResourceModel) RefreshFromGetResponse(resp *shared.SyncronizationSyncOutput) {
 	r.ID = types.Int64Value(resp.ID)
-	if r.Sync == nil {
-		r.Sync = &CreateSynchronizationInputSync{}
-	}
-	if resp.Sync == nil {
-		r.Sync = nil
+	r.Name = types.StringValue(resp.Name)
+	if resp.Table != nil {
+		r.Table = types.StringValue(*resp.Table)
 	} else {
-		r.Sync = &CreateSynchronizationInputSync{}
-		if resp.Sync.ID != nil {
-			r.Sync.ID = types.Int64Value(*resp.Sync.ID)
-		} else {
-			r.Sync.ID = types.Int64Null()
-		}
-		if resp.Sync.Name != nil {
-			r.Sync.Name = types.StringValue(*resp.Sync.Name)
-		} else {
-			r.Sync.Name = types.StringNull()
-		}
-		if resp.Sync.Table != nil {
-			r.Sync.Table = types.StringValue(*resp.Sync.Table)
-		} else {
-			r.Sync.Table = types.StringNull()
-		}
+		r.Table = types.StringNull()
 	}
 }
 
-func (r *SynchronizationResourceModel) RefreshFromCreateResponse(resp *shared.Synchronization) {
+func (r *SynchronizationResourceModel) RefreshFromCreateResponse(resp *shared.SyncronizationSyncOutput) {
 	r.RefreshFromGetResponse(resp)
 }
 
-func (r *SynchronizationResourceModel) RefreshFromUpdateResponse(resp *shared.Synchronization) {
+func (r *SynchronizationResourceModel) RefreshFromUpdateResponse(resp *shared.SyncronizationSyncOutput) {
 	r.RefreshFromGetResponse(resp)
 }
