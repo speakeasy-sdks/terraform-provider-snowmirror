@@ -94,7 +94,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateSynchronizationInput'
+              $ref: '#/components/schemas/CreateSynchronizationUpdate'
         required: true
       responses:
         '200':
@@ -218,6 +218,9 @@ components:
       x-speakeasy-entity: Synchronization
       type: object
       properties:
+        id:
+          type: integer
+          description: Id of the synchronization.
         name:
           type: string
           description: Display name of the synchronization.
@@ -282,7 +285,7 @@ components:
           example: true                
         runImmediately:
           type: boolean
-          description: Determines whether initial synchronization should be done          
+          description: Determines whether initial synchronization should be done
           example: false
         scheduler:
           type: object
@@ -330,6 +333,147 @@ components:
             - LOW
             - LOWEST
           example: NORMAL
+          retentionPeriod:
+            type: integer
+            description: How many days to keep backups
+          format:
+            type: string
+            description: How to store backups. "CSV" - comma separated file. "XML" - XML files. 
+            enum:
+              - CSV
+              - XML
+      required:
+        - name
+        - mirrorTable
+    CreateSynchronizationSyncUpdate:
+      x-speakeasy-entity: Synchronization
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Id of the synchronization.
+        name:
+          type: string
+          description: Display name of the synchronization.
+          example: incident
+        table:
+          type: string
+          description: Name of the table in ServiceNow.
+          example: incident
+        view:
+          type: string
+          description: Name of the view in ServiceNow.
+        mirrorTable:
+          type: string
+          description: Name of the table in mirror database where the data will be migrated.
+          example: incident
+        columns:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: sys_id
+        columnsToExclude:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: sys_created_by
+        allowInheritedColumns:
+          type: boolean
+          description: 'SnowMirror checks if columns exist in ServiceNow. If this flag is set to true,'
+        referenceFieldType:
+          type: string
+          description: Defines how to synchronize reference field types.
+        autoSchemaUpdate:
+          type: boolean
+          description: |
+                Configures how to check for schema changes in ServiceNow.
+
+                Enabled (true) - whenever a synchronization is executed, SnowMirror checks for schema changes in ServiceNow. Automatically adds, updates (data type, max. length of a column) and removes columns. If a new column is added SnowMirror clears the mirror table and downloads all records from scratch.
+                Enabled (no truncation) (ENABLED_WITHOUT_TRUNCATION) - the same as Enabled option. It handles new columns differently, though. If a new column is added SnowMirror does not clear the mirror table. Instead, it creates the column and populates it with a default value (which is defined in ServiceNow).
+          example: true                
+        encodedQuery:
+          type: string
+          example: ''
+        deleteStrategy:
+          type: string
+          enum:
+            - AUDIT
+            - TRUNCATE
+            - DIFF
+            - NONE
+          example: AUDIT          
+        active:
+          type: boolean
+          description: |-
+                true - synchronization is active and can be scheduled to synchronize data from ServiceNow
+                false - synchronization is deactivated and cannot be scheduled to synchronize data from ServiceNowNow          
+          example: true                
+        runImmediately:
+          type: boolean
+          description: Determines whether initial synchronization should be done
+          x-speakeasy-terraform-ignore: true          
+          example: false
+        scheduler:
+          type: object
+          properties:
+            type:
+              type: string
+              description: Specifies when the incremental load synchronization will run
+              enum:
+                - MANUALLY
+                - DAILY
+                - WEEKLY
+                - PERIODICALLY
+                - CRON
+              example: MANUALLY              
+            beginDate:
+              type: string
+              example: '2014-08-07'
+        fullLoadScheduler:
+          type: object
+          properties:
+            executionType:
+              type: string
+              enum:
+                - CLEAN_AND_SYNCHRONIZE
+                - DIFFERENTIAL.
+              example: CLEAN_AND_SYNCHRONIZE
+            type:
+              type: string
+              enum:
+                - MANUALLY
+                - DAILY
+                - WEEKLY
+                - PERIODICALLY
+                - CRON
+              example: MANUALLY
+            beginDate:
+              type: string
+              example: '2014-08-07'
+        schedulerPriority:
+          type: string
+          enum:
+            - HIGHEST
+            - HIGH
+            - NORMAL
+            - LOW
+            - LOWEST
+          example: NORMAL
+          retentionPeriod:
+            type: integer
+            description: How many days to keep backups
+          format:
+            type: string
+            description: How to store backups. "CSV" - comma separated file. "XML" - XML files. 
+            enum:
+              - CSV
+              - XML
       required:
         - name
         - mirrorTable
@@ -341,19 +485,25 @@ components:
           $ref: '#/components/schemas/CreateSynchronizationSyncInput'
       x-stoplight:
         id: d04afae9c8b4d
+    CreateSynchronizationUpdate:
+      description: An input object to updating a Synchronization
+      type: object
+      properties:
+        sync:
+          $ref: '#/components/schemas/CreateSynchronizationSyncUpdate'
     SyncronizationSyncOutput:
       type: object
       x-speakeasy-entity: Synchronization
       properties:
+        id:
+          type: integer
+          description: Sync ID
         name:
           type: string
           description: Display name of the synchronization.
         table:
           type: string
           description: Name of the table in ServiceNow.
-        id:
-          type: integer
-          description: Sync ID
       required:
         - id
         - name
