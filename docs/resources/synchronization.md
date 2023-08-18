@@ -16,7 +16,7 @@ Synchronization Resource
 resource "snowmirror_synchronization" "my_synchronization" {
   active                  = true
   allow_inherited_columns = false
-  auto_schema_update      = true
+  auto_schema_update      = "true"
   columns = [
     {
       name = "sys_id"
@@ -32,17 +32,26 @@ resource "snowmirror_synchronization" "my_synchronization" {
   full_load_scheduler = {
     begin_date     = "2014-08-07"
     execution_type = "CLEAN_AND_SYNCHRONIZE"
+    time           = "...my_time..."
     type           = "MANUALLY"
+    visible        = false
   }
+  id                   = 3
   mirror_table         = "incident"
   name                 = "incident"
   reference_field_type = "...my_reference_field_type..."
   run_immediately      = false
   scheduler = {
-    begin_date = "2014-08-07"
-    type       = "MANUALLY"
+    begin_date = "2023-08-11"
+    days = [
+      "SATURDAY",
+    ]
+    inc_load_execution_type = "...my_inc_load_execution_type..."
+    time                    = "02:00"
+    type                    = "MANUALLY"
+    visible                 = false
   }
-  scheduler_priority = "NORMAL"
+  scheduler_priority = "HIGH"
   table              = "incident"
   view               = "...my_view..."
 }
@@ -53,7 +62,6 @@ resource "snowmirror_synchronization" "my_synchronization" {
 
 ### Required
 
-- `mirror_table` (String) Name of the table in mirror database where the data will be migrated.
 - `name` (String) Display name of the synchronization.
 
 ### Optional
@@ -61,7 +69,7 @@ resource "snowmirror_synchronization" "my_synchronization" {
 - `active` (Boolean) true - synchronization is active and can be scheduled to synchronize data from ServiceNow
 false - synchronization is deactivated and cannot be scheduled to synchronize data from ServiceNowNow
 - `allow_inherited_columns` (Boolean) SnowMirror checks if columns exist in ServiceNow. If this flag is set to true,
-- `auto_schema_update` (Boolean) Configures how to check for schema changes in ServiceNow.
+- `auto_schema_update` (String) Configures how to check for schema changes in ServiceNow.
 
 Enabled (true) - whenever a synchronization is executed, SnowMirror checks for schema changes in ServiceNow. Automatically adds, updates (data type, max. length of a column) and removes columns. If a new column is added SnowMirror clears the mirror table and downloads all records from scratch.
 Enabled (no truncation) (ENABLED_WITHOUT_TRUNCATION) - the same as Enabled option. It handles new columns differently, though. If a new column is added SnowMirror does not clear the mirror table. Instead, it creates the column and populates it with a default value (which is defined in ServiceNow).
@@ -70,6 +78,8 @@ Enabled (no truncation) (ENABLED_WITHOUT_TRUNCATION) - the same as Enabled optio
 - `delete_strategy` (String) must be one of ["AUDIT", "TRUNCATE", "DIFF", "NONE"]
 - `encoded_query` (String)
 - `full_load_scheduler` (Attributes) (see [below for nested schema](#nestedatt--full_load_scheduler))
+- `id` (Number) Id of the synchronization.
+- `mirror_table` (String) Name of the table in mirror database where the data will be migrated.
 - `reference_field_type` (String) Defines how to synchronize reference field types.
 - `run_immediately` (Boolean) Determines whether initial synchronization should be done
 - `scheduler` (Attributes) (see [below for nested schema](#nestedatt--scheduler))
@@ -79,7 +89,13 @@ Enabled (no truncation) (ENABLED_WITHOUT_TRUNCATION) - the same as Enabled optio
 
 ### Read-Only
 
-- `id` (Number) Sync ID
+- `attachment_directory` (String)
+- `format` (String) must be one of ["CSV", "XML"]
+How to store backups. "CSV" - comma separated file. "XML" - XML files.
+- `master_table` (String)
+- `retention_period` (Number) How many days to keep backups
+- `synchronization_type` (String)
+- `update_before_synchronization_run` (String)
 
 <a id="nestedatt--columns"></a>
 ### Nested Schema for `columns`
@@ -106,6 +122,11 @@ Optional:
 - `execution_type` (String) must be one of ["CLEAN_AND_SYNCHRONIZE", "DIFFERENTIAL."]
 - `type` (String) must be one of ["MANUALLY", "DAILY", "WEEKLY", "PERIODICALLY", "CRON"]
 
+Read-Only:
+
+- `time` (String)
+- `visible` (Boolean)
+
 
 <a id="nestedatt--scheduler"></a>
 ### Nested Schema for `scheduler`
@@ -113,7 +134,11 @@ Optional:
 Optional:
 
 - `begin_date` (String)
+- `days` (List of String)
+- `inc_load_execution_type` (String)
+- `time` (String)
 - `type` (String) must be one of ["MANUALLY", "DAILY", "WEEKLY", "PERIODICALLY", "CRON"]
 Specifies when the incremental load synchronization will run
+- `visible` (Boolean)
 
 

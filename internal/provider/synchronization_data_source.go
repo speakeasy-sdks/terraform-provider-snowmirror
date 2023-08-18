@@ -31,23 +31,29 @@ type SynchronizationDataSource struct {
 
 // SynchronizationDataSourceModel describes the data model.
 type SynchronizationDataSourceModel struct {
-	Active                types.Bool                                       `tfsdk:"active"`
-	AllowInheritedColumns types.Bool                                       `tfsdk:"allow_inherited_columns"`
-	AutoSchemaUpdate      types.Bool                                       `tfsdk:"auto_schema_update"`
-	Columns               []CreateSynchronizationSyncInputColumns          `tfsdk:"columns"`
-	ColumnsToExclude      []CreateSynchronizationSyncInputColumns          `tfsdk:"columns_to_exclude"`
-	DeleteStrategy        types.String                                     `tfsdk:"delete_strategy"`
-	EncodedQuery          types.String                                     `tfsdk:"encoded_query"`
-	FullLoadScheduler     *CreateSynchronizationSyncInputFullLoadScheduler `tfsdk:"full_load_scheduler"`
-	ID                    types.Int64                                      `tfsdk:"id"`
-	MirrorTable           types.String                                     `tfsdk:"mirror_table"`
-	Name                  types.String                                     `tfsdk:"name"`
-	ReferenceFieldType    types.String                                     `tfsdk:"reference_field_type"`
-	RunImmediately        types.Bool                                       `tfsdk:"run_immediately"`
-	Scheduler             *CreateSynchronizationSyncInputScheduler         `tfsdk:"scheduler"`
-	SchedulerPriority     types.String                                     `tfsdk:"scheduler_priority"`
-	Table                 types.String                                     `tfsdk:"table"`
-	View                  types.String                                     `tfsdk:"view"`
+	Active                         types.Bool                                 `tfsdk:"active"`
+	AllowInheritedColumns          types.Bool                                 `tfsdk:"allow_inherited_columns"`
+	AttachmentDirectory            types.String                               `tfsdk:"attachment_directory"`
+	AutoSchemaUpdate               types.String                               `tfsdk:"auto_schema_update"`
+	Columns                        []CreateSynchronizationSyncInputColumns    `tfsdk:"columns"`
+	ColumnsToExclude               []CreateSynchronizationSyncInputColumns    `tfsdk:"columns_to_exclude"`
+	DeleteStrategy                 types.String                               `tfsdk:"delete_strategy"`
+	EncodedQuery                   types.String                               `tfsdk:"encoded_query"`
+	Format                         types.String                               `tfsdk:"format"`
+	FullLoadScheduler              *SyncronizationSyncOutputFullLoadScheduler `tfsdk:"full_load_scheduler"`
+	ID                             types.Int64                                `tfsdk:"id"`
+	MasterTable                    types.String                               `tfsdk:"master_table"`
+	MirrorTable                    types.String                               `tfsdk:"mirror_table"`
+	Name                           types.String                               `tfsdk:"name"`
+	ReferenceFieldType             types.String                               `tfsdk:"reference_field_type"`
+	RetentionPeriod                types.Int64                                `tfsdk:"retention_period"`
+	RunImmediately                 types.Bool                                 `tfsdk:"run_immediately"`
+	Scheduler                      *SyncronizationSyncOutputScheduler         `tfsdk:"scheduler"`
+	SchedulerPriority              types.String                               `tfsdk:"scheduler_priority"`
+	SynchronizationType            types.String                               `tfsdk:"synchronization_type"`
+	Table                          types.String                               `tfsdk:"table"`
+	UpdateBeforeSynchronizationRun types.String                               `tfsdk:"update_before_synchronization_run"`
+	View                           types.String                               `tfsdk:"view"`
 }
 
 // Metadata returns the data source type name.
@@ -62,16 +68,19 @@ func (r *SynchronizationDataSource) Schema(ctx context.Context, req datasource.S
 
 		Attributes: map[string]schema.Attribute{
 			"active": schema.BoolAttribute{
-				Optional: true,
+				Computed: true,
 				MarkdownDescription: `true - synchronization is active and can be scheduled to synchronize data from ServiceNow` + "\n" +
 					`false - synchronization is deactivated and cannot be scheduled to synchronize data from ServiceNowNow          `,
 			},
 			"allow_inherited_columns": schema.BoolAttribute{
-				Optional:    true,
+				Computed:    true,
 				Description: `SnowMirror checks if columns exist in ServiceNow. If this flag is set to true,`,
 			},
-			"auto_schema_update": schema.BoolAttribute{
-				Optional: true,
+			"attachment_directory": schema.StringAttribute{
+				Computed: true,
+			},
+			"auto_schema_update": schema.StringAttribute{
+				Computed: true,
 				MarkdownDescription: `Configures how to check for schema changes in ServiceNow.` + "\n" +
 					`` + "\n" +
 					`Enabled (true) - whenever a synchronization is executed, SnowMirror checks for schema changes in ServiceNow. Automatically adds, updates (data type, max. length of a column) and removes columns. If a new column is added SnowMirror clears the mirror table and downloads all records from scratch.` + "\n" +
@@ -99,7 +108,7 @@ func (r *SynchronizationDataSource) Schema(ctx context.Context, req datasource.S
 				},
 			},
 			"delete_strategy": schema.StringAttribute{
-				Optional: true,
+				Computed: true,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"AUDIT",
@@ -111,16 +120,27 @@ func (r *SynchronizationDataSource) Schema(ctx context.Context, req datasource.S
 				Description: `must be one of ["AUDIT", "TRUNCATE", "DIFF", "NONE"]`,
 			},
 			"encoded_query": schema.StringAttribute{
-				Optional: true,
+				Computed: true,
+			},
+			"format": schema.StringAttribute{
+				Computed: true,
+				Validators: []validator.String{
+					stringvalidator.OneOf(
+						"CSV",
+						"XML",
+					),
+				},
+				MarkdownDescription: `must be one of ["CSV", "XML"]` + "\n" +
+					`How to store backups. "CSV" - comma separated file. "XML" - XML files.`,
 			},
 			"full_load_scheduler": schema.SingleNestedAttribute{
-				Optional: true,
+				Computed: true,
 				Attributes: map[string]schema.Attribute{
 					"begin_date": schema.StringAttribute{
-						Optional: true,
+						Computed: true,
 					},
 					"execution_type": schema.StringAttribute{
-						Optional: true,
+						Computed: true,
 						Validators: []validator.String{
 							stringvalidator.OneOf(
 								"CLEAN_AND_SYNCHRONIZE",
@@ -129,8 +149,11 @@ func (r *SynchronizationDataSource) Schema(ctx context.Context, req datasource.S
 						},
 						Description: `must be one of ["CLEAN_AND_SYNCHRONIZE", "DIFFERENTIAL."]`,
 					},
+					"time": schema.StringAttribute{
+						Computed: true,
+					},
 					"type": schema.StringAttribute{
-						Optional: true,
+						Computed: true,
 						Validators: []validator.String{
 							stringvalidator.OneOf(
 								"MANUALLY",
@@ -142,14 +165,20 @@ func (r *SynchronizationDataSource) Schema(ctx context.Context, req datasource.S
 						},
 						Description: `must be one of ["MANUALLY", "DAILY", "WEEKLY", "PERIODICALLY", "CRON"]`,
 					},
+					"visible": schema.BoolAttribute{
+						Computed: true,
+					},
 				},
 			},
 			"id": schema.Int64Attribute{
-				Required:    true,
+				Optional:    true,
 				Description: `Id of the synchronization.`,
 			},
+			"master_table": schema.StringAttribute{
+				Computed: true,
+			},
 			"mirror_table": schema.StringAttribute{
-				Required:    true,
+				Computed:    true,
 				Description: `Name of the table in mirror database where the data will be migrated.`,
 			},
 			"name": schema.StringAttribute{
@@ -157,21 +186,35 @@ func (r *SynchronizationDataSource) Schema(ctx context.Context, req datasource.S
 				Description: `Display name of the synchronization.`,
 			},
 			"reference_field_type": schema.StringAttribute{
-				Optional:    true,
+				Computed:    true,
 				Description: `Defines how to synchronize reference field types.`,
+			},
+			"retention_period": schema.Int64Attribute{
+				Computed:    true,
+				Description: `How many days to keep backups`,
 			},
 			"run_immediately": schema.BoolAttribute{
 				Optional:    true,
 				Description: `Determines whether initial synchronization should be done`,
 			},
 			"scheduler": schema.SingleNestedAttribute{
-				Optional: true,
+				Computed: true,
 				Attributes: map[string]schema.Attribute{
 					"begin_date": schema.StringAttribute{
-						Optional: true,
+						Computed: true,
+					},
+					"days": schema.ListAttribute{
+						Computed:    true,
+						ElementType: types.StringType,
+					},
+					"inc_load_execution_type": schema.StringAttribute{
+						Computed: true,
+					},
+					"time": schema.StringAttribute{
+						Computed: true,
 					},
 					"type": schema.StringAttribute{
-						Optional: true,
+						Computed: true,
 						Validators: []validator.String{
 							stringvalidator.OneOf(
 								"MANUALLY",
@@ -184,10 +227,13 @@ func (r *SynchronizationDataSource) Schema(ctx context.Context, req datasource.S
 						MarkdownDescription: `must be one of ["MANUALLY", "DAILY", "WEEKLY", "PERIODICALLY", "CRON"]` + "\n" +
 							`Specifies when the incremental load synchronization will run`,
 					},
+					"visible": schema.BoolAttribute{
+						Computed: true,
+					},
 				},
 			},
 			"scheduler_priority": schema.StringAttribute{
-				Optional: true,
+				Computed: true,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"HIGHEST",
@@ -199,12 +245,18 @@ func (r *SynchronizationDataSource) Schema(ctx context.Context, req datasource.S
 				},
 				Description: `must be one of ["HIGHEST", "HIGH", "NORMAL", "LOW", "LOWEST"]`,
 			},
+			"synchronization_type": schema.StringAttribute{
+				Computed: true,
+			},
 			"table": schema.StringAttribute{
 				Computed:    true,
 				Description: `Name of the table in ServiceNow.`,
 			},
+			"update_before_synchronization_run": schema.StringAttribute{
+				Computed: true,
+			},
 			"view": schema.StringAttribute{
-				Optional:    true,
+				Computed:    true,
 				Description: `Name of the view in ServiceNow.`,
 			},
 		},

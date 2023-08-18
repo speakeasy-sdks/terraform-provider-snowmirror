@@ -2,11 +2,260 @@
 
 package shared
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
+type SyncronizationSyncOutputDeleteStrategy string
+
+const (
+	SyncronizationSyncOutputDeleteStrategyAudit    SyncronizationSyncOutputDeleteStrategy = "AUDIT"
+	SyncronizationSyncOutputDeleteStrategyTruncate SyncronizationSyncOutputDeleteStrategy = "TRUNCATE"
+	SyncronizationSyncOutputDeleteStrategyDiff     SyncronizationSyncOutputDeleteStrategy = "DIFF"
+	SyncronizationSyncOutputDeleteStrategyNone     SyncronizationSyncOutputDeleteStrategy = "NONE"
+)
+
+func (e SyncronizationSyncOutputDeleteStrategy) ToPointer() *SyncronizationSyncOutputDeleteStrategy {
+	return &e
+}
+
+func (e *SyncronizationSyncOutputDeleteStrategy) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "AUDIT":
+		fallthrough
+	case "TRUNCATE":
+		fallthrough
+	case "DIFF":
+		fallthrough
+	case "NONE":
+		*e = SyncronizationSyncOutputDeleteStrategy(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for SyncronizationSyncOutputDeleteStrategy: %v", v)
+	}
+}
+
+// SyncronizationSyncOutputFormat - How to store backups. "CSV" - comma separated file. "XML" - XML files.
+type SyncronizationSyncOutputFormat string
+
+const (
+	SyncronizationSyncOutputFormatCsv SyncronizationSyncOutputFormat = "CSV"
+	SyncronizationSyncOutputFormatXML SyncronizationSyncOutputFormat = "XML"
+)
+
+func (e SyncronizationSyncOutputFormat) ToPointer() *SyncronizationSyncOutputFormat {
+	return &e
+}
+
+func (e *SyncronizationSyncOutputFormat) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "CSV":
+		fallthrough
+	case "XML":
+		*e = SyncronizationSyncOutputFormat(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for SyncronizationSyncOutputFormat: %v", v)
+	}
+}
+
+type SyncronizationSyncOutputFullLoadSchedulerExecutionType string
+
+const (
+	SyncronizationSyncOutputFullLoadSchedulerExecutionTypeCleanAndSynchronize SyncronizationSyncOutputFullLoadSchedulerExecutionType = "CLEAN_AND_SYNCHRONIZE"
+	SyncronizationSyncOutputFullLoadSchedulerExecutionTypeDifferential        SyncronizationSyncOutputFullLoadSchedulerExecutionType = "DIFFERENTIAL."
+)
+
+func (e SyncronizationSyncOutputFullLoadSchedulerExecutionType) ToPointer() *SyncronizationSyncOutputFullLoadSchedulerExecutionType {
+	return &e
+}
+
+func (e *SyncronizationSyncOutputFullLoadSchedulerExecutionType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "CLEAN_AND_SYNCHRONIZE":
+		fallthrough
+	case "DIFFERENTIAL.":
+		*e = SyncronizationSyncOutputFullLoadSchedulerExecutionType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for SyncronizationSyncOutputFullLoadSchedulerExecutionType: %v", v)
+	}
+}
+
+type SyncronizationSyncOutputFullLoadSchedulerType string
+
+const (
+	SyncronizationSyncOutputFullLoadSchedulerTypeManually     SyncronizationSyncOutputFullLoadSchedulerType = "MANUALLY"
+	SyncronizationSyncOutputFullLoadSchedulerTypeDaily        SyncronizationSyncOutputFullLoadSchedulerType = "DAILY"
+	SyncronizationSyncOutputFullLoadSchedulerTypeWeekly       SyncronizationSyncOutputFullLoadSchedulerType = "WEEKLY"
+	SyncronizationSyncOutputFullLoadSchedulerTypePeriodically SyncronizationSyncOutputFullLoadSchedulerType = "PERIODICALLY"
+	SyncronizationSyncOutputFullLoadSchedulerTypeCron         SyncronizationSyncOutputFullLoadSchedulerType = "CRON"
+)
+
+func (e SyncronizationSyncOutputFullLoadSchedulerType) ToPointer() *SyncronizationSyncOutputFullLoadSchedulerType {
+	return &e
+}
+
+func (e *SyncronizationSyncOutputFullLoadSchedulerType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "MANUALLY":
+		fallthrough
+	case "DAILY":
+		fallthrough
+	case "WEEKLY":
+		fallthrough
+	case "PERIODICALLY":
+		fallthrough
+	case "CRON":
+		*e = SyncronizationSyncOutputFullLoadSchedulerType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for SyncronizationSyncOutputFullLoadSchedulerType: %v", v)
+	}
+}
+
+type SyncronizationSyncOutputFullLoadScheduler struct {
+	BeginDate     *string                                                 `json:"beginDate,omitempty"`
+	ExecutionType *SyncronizationSyncOutputFullLoadSchedulerExecutionType `json:"executionType,omitempty"`
+	Time          *string                                                 `json:"time,omitempty"`
+	Type          *SyncronizationSyncOutputFullLoadSchedulerType          `json:"type,omitempty"`
+	Visible       *bool                                                   `json:"visible,omitempty"`
+}
+
+// SyncronizationSyncOutputSchedulerType - Specifies when the incremental load synchronization will run
+type SyncronizationSyncOutputSchedulerType string
+
+const (
+	SyncronizationSyncOutputSchedulerTypeManually     SyncronizationSyncOutputSchedulerType = "MANUALLY"
+	SyncronizationSyncOutputSchedulerTypeDaily        SyncronizationSyncOutputSchedulerType = "DAILY"
+	SyncronizationSyncOutputSchedulerTypeWeekly       SyncronizationSyncOutputSchedulerType = "WEEKLY"
+	SyncronizationSyncOutputSchedulerTypePeriodically SyncronizationSyncOutputSchedulerType = "PERIODICALLY"
+	SyncronizationSyncOutputSchedulerTypeCron         SyncronizationSyncOutputSchedulerType = "CRON"
+)
+
+func (e SyncronizationSyncOutputSchedulerType) ToPointer() *SyncronizationSyncOutputSchedulerType {
+	return &e
+}
+
+func (e *SyncronizationSyncOutputSchedulerType) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "MANUALLY":
+		fallthrough
+	case "DAILY":
+		fallthrough
+	case "WEEKLY":
+		fallthrough
+	case "PERIODICALLY":
+		fallthrough
+	case "CRON":
+		*e = SyncronizationSyncOutputSchedulerType(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for SyncronizationSyncOutputSchedulerType: %v", v)
+	}
+}
+
+type SyncronizationSyncOutputScheduler struct {
+	BeginDate            *string `json:"beginDate,omitempty"`
+	IncLoadExecutionType *string `json:"incLoadExecutionType,omitempty"`
+	Time                 *string `json:"time,omitempty"`
+	// Specifies when the incremental load synchronization will run
+	Type    *SyncronizationSyncOutputSchedulerType `json:"type,omitempty"`
+	Visible *bool                                  `json:"visible,omitempty"`
+}
+
+type SyncronizationSyncOutputSchedulerPriority string
+
+const (
+	SyncronizationSyncOutputSchedulerPriorityHighest SyncronizationSyncOutputSchedulerPriority = "HIGHEST"
+	SyncronizationSyncOutputSchedulerPriorityHigh    SyncronizationSyncOutputSchedulerPriority = "HIGH"
+	SyncronizationSyncOutputSchedulerPriorityNormal  SyncronizationSyncOutputSchedulerPriority = "NORMAL"
+	SyncronizationSyncOutputSchedulerPriorityLow     SyncronizationSyncOutputSchedulerPriority = "LOW"
+	SyncronizationSyncOutputSchedulerPriorityLowest  SyncronizationSyncOutputSchedulerPriority = "LOWEST"
+)
+
+func (e SyncronizationSyncOutputSchedulerPriority) ToPointer() *SyncronizationSyncOutputSchedulerPriority {
+	return &e
+}
+
+func (e *SyncronizationSyncOutputSchedulerPriority) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch v {
+	case "HIGHEST":
+		fallthrough
+	case "HIGH":
+		fallthrough
+	case "NORMAL":
+		fallthrough
+	case "LOW":
+		fallthrough
+	case "LOWEST":
+		*e = SyncronizationSyncOutputSchedulerPriority(v)
+		return nil
+	default:
+		return fmt.Errorf("invalid value for SyncronizationSyncOutputSchedulerPriority: %v", v)
+	}
+}
+
 type SyncronizationSyncOutput struct {
-	// Sync ID
-	ID int64 `json:"id"`
+	// true - synchronization is active and can be scheduled to synchronize data from ServiceNow
+	// false - synchronization is deactivated and cannot be scheduled to synchronize data from ServiceNowNow
+	Active *bool `json:"active,omitempty"`
+	// SnowMirror checks if columns exist in ServiceNow. If this flag is set to true,
+	AllowInheritedColumns *bool   `json:"allowInheritedColumns,omitempty"`
+	AttachmentDirectory   *string `json:"attachmentDirectory,omitempty"`
+	// Configures how to check for schema changes in ServiceNow.
+	//
+	// Enabled (true) - whenever a synchronization is executed, SnowMirror checks for schema changes in ServiceNow. Automatically adds, updates (data type, max. length of a column) and removes columns. If a new column is added SnowMirror clears the mirror table and downloads all records from scratch.
+	// Enabled (no truncation) (ENABLED_WITHOUT_TRUNCATION) - the same as Enabled option. It handles new columns differently, though. If a new column is added SnowMirror does not clear the mirror table. Instead, it creates the column and populates it with a default value (which is defined in ServiceNow).
+	//
+	AutoSchemaUpdate *string                                 `json:"autoSchemaUpdate,omitempty"`
+	DeleteStrategy   *SyncronizationSyncOutputDeleteStrategy `json:"deleteStrategy,omitempty"`
+	EncodedQuery     *string                                 `json:"encodedQuery,omitempty"`
+	// How to store backups. "CSV" - comma separated file. "XML" - XML files.
+	Format            *SyncronizationSyncOutputFormat            `json:"format,omitempty"`
+	FullLoadScheduler *SyncronizationSyncOutputFullLoadScheduler `json:"fullLoadScheduler,omitempty"`
+	// Id of the synchronization.
+	ID          *int64  `json:"id,omitempty"`
+	MasterTable *string `json:"masterTable,omitempty"`
+	// Name of the table in mirror database where the data will be migrated.
+	MirrorTable *string `json:"mirrorTable,omitempty"`
 	// Display name of the synchronization.
-	Name string `json:"name"`
+	Name *string `json:"name,omitempty"`
+	// Defines how to synchronize reference field types.
+	ReferenceFieldType *string `json:"referenceFieldType,omitempty"`
+	// How many days to keep backups
+	RetentionPeriod     *int64                                     `json:"retentionPeriod,omitempty"`
+	Scheduler           *SyncronizationSyncOutputScheduler         `json:"scheduler,omitempty"`
+	SchedulerPriority   *SyncronizationSyncOutputSchedulerPriority `json:"schedulerPriority,omitempty"`
+	SynchronizationType *string                                    `json:"synchronizationType,omitempty"`
 	// Name of the table in ServiceNow.
-	Table *string `json:"table,omitempty"`
+	Table                          *string `json:"table,omitempty"`
+	UpdateBeforeSynchronizationRun *string `json:"updateBeforeSynchronizationRun,omitempty"`
+	// Name of the view in ServiceNow.
+	View *string `json:"view,omitempty"`
 }

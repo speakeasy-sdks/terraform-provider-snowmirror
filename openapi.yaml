@@ -544,6 +544,7 @@ components:
           description: Name of the table in mirror database where the data will be migrated.
           example: incident
         columns:
+          x-speakeasy-ignore: true
           type: array
           items:
             type: object
@@ -552,6 +553,7 @@ components:
                 type: string
                 example: sys_id
         columnsToExclude:
+          x-speakeasy-ignore: true
           type: array
           items:
             type: object

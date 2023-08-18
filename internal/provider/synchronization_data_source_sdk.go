@@ -8,11 +8,160 @@ import (
 )
 
 func (r *SynchronizationDataSourceModel) RefreshFromGetResponse(resp *shared.SyncronizationSyncOutput) {
-	r.ID = types.Int64Value(resp.ID)
-	r.Name = types.StringValue(resp.Name)
+	if resp.Active != nil {
+		r.Active = types.BoolValue(*resp.Active)
+	} else {
+		r.Active = types.BoolNull()
+	}
+	if resp.AllowInheritedColumns != nil {
+		r.AllowInheritedColumns = types.BoolValue(*resp.AllowInheritedColumns)
+	} else {
+		r.AllowInheritedColumns = types.BoolNull()
+	}
+	if resp.AttachmentDirectory != nil {
+		r.AttachmentDirectory = types.StringValue(*resp.AttachmentDirectory)
+	} else {
+		r.AttachmentDirectory = types.StringNull()
+	}
+	if resp.AutoSchemaUpdate != nil {
+		r.AutoSchemaUpdate = types.StringValue(*resp.AutoSchemaUpdate)
+	} else {
+		r.AutoSchemaUpdate = types.StringNull()
+	}
+	if resp.DeleteStrategy != nil {
+		r.DeleteStrategy = types.StringValue(string(*resp.DeleteStrategy))
+	} else {
+		r.DeleteStrategy = types.StringNull()
+	}
+	if resp.EncodedQuery != nil {
+		r.EncodedQuery = types.StringValue(*resp.EncodedQuery)
+	} else {
+		r.EncodedQuery = types.StringNull()
+	}
+	if resp.Format != nil {
+		r.Format = types.StringValue(string(*resp.Format))
+	} else {
+		r.Format = types.StringNull()
+	}
+	if r.FullLoadScheduler == nil {
+		r.FullLoadScheduler = &SyncronizationSyncOutputFullLoadScheduler{}
+	}
+	if resp.FullLoadScheduler == nil {
+		r.FullLoadScheduler = nil
+	} else {
+		r.FullLoadScheduler = &SyncronizationSyncOutputFullLoadScheduler{}
+		if resp.FullLoadScheduler.BeginDate != nil {
+			r.FullLoadScheduler.BeginDate = types.StringValue(*resp.FullLoadScheduler.BeginDate)
+		} else {
+			r.FullLoadScheduler.BeginDate = types.StringNull()
+		}
+		if resp.FullLoadScheduler.ExecutionType != nil {
+			r.FullLoadScheduler.ExecutionType = types.StringValue(string(*resp.FullLoadScheduler.ExecutionType))
+		} else {
+			r.FullLoadScheduler.ExecutionType = types.StringNull()
+		}
+		if resp.FullLoadScheduler.Time != nil {
+			r.FullLoadScheduler.Time = types.StringValue(*resp.FullLoadScheduler.Time)
+		} else {
+			r.FullLoadScheduler.Time = types.StringNull()
+		}
+		if resp.FullLoadScheduler.Type != nil {
+			r.FullLoadScheduler.Type = types.StringValue(string(*resp.FullLoadScheduler.Type))
+		} else {
+			r.FullLoadScheduler.Type = types.StringNull()
+		}
+		if resp.FullLoadScheduler.Visible != nil {
+			r.FullLoadScheduler.Visible = types.BoolValue(*resp.FullLoadScheduler.Visible)
+		} else {
+			r.FullLoadScheduler.Visible = types.BoolNull()
+		}
+	}
+	if resp.ID != nil {
+		r.ID = types.Int64Value(*resp.ID)
+	} else {
+		r.ID = types.Int64Null()
+	}
+	if resp.MasterTable != nil {
+		r.MasterTable = types.StringValue(*resp.MasterTable)
+	} else {
+		r.MasterTable = types.StringNull()
+	}
+	if resp.MirrorTable != nil {
+		r.MirrorTable = types.StringValue(*resp.MirrorTable)
+	} else {
+		r.MirrorTable = types.StringNull()
+	}
+	if resp.Name != nil {
+		r.Name = types.StringValue(*resp.Name)
+	} else {
+		r.Name = types.StringNull()
+	}
+	if resp.ReferenceFieldType != nil {
+		r.ReferenceFieldType = types.StringValue(*resp.ReferenceFieldType)
+	} else {
+		r.ReferenceFieldType = types.StringNull()
+	}
+	if resp.RetentionPeriod != nil {
+		r.RetentionPeriod = types.Int64Value(*resp.RetentionPeriod)
+	} else {
+		r.RetentionPeriod = types.Int64Null()
+	}
+	if r.Scheduler == nil {
+		r.Scheduler = &SyncronizationSyncOutputScheduler{}
+	}
+	if resp.Scheduler == nil {
+		r.Scheduler = nil
+	} else {
+		r.Scheduler = &SyncronizationSyncOutputScheduler{}
+		if resp.Scheduler.BeginDate != nil {
+			r.Scheduler.BeginDate = types.StringValue(*resp.Scheduler.BeginDate)
+		} else {
+			r.Scheduler.BeginDate = types.StringNull()
+		}
+		if resp.Scheduler.IncLoadExecutionType != nil {
+			r.Scheduler.IncLoadExecutionType = types.StringValue(*resp.Scheduler.IncLoadExecutionType)
+		} else {
+			r.Scheduler.IncLoadExecutionType = types.StringNull()
+		}
+		if resp.Scheduler.Time != nil {
+			r.Scheduler.Time = types.StringValue(*resp.Scheduler.Time)
+		} else {
+			r.Scheduler.Time = types.StringNull()
+		}
+		if resp.Scheduler.Type != nil {
+			r.Scheduler.Type = types.StringValue(string(*resp.Scheduler.Type))
+		} else {
+			r.Scheduler.Type = types.StringNull()
+		}
+		if resp.Scheduler.Visible != nil {
+			r.Scheduler.Visible = types.BoolValue(*resp.Scheduler.Visible)
+		} else {
+			r.Scheduler.Visible = types.BoolNull()
+		}
+	}
+	if resp.SchedulerPriority != nil {
+		r.SchedulerPriority = types.StringValue(string(*resp.SchedulerPriority))
+	} else {
+		r.SchedulerPriority = types.StringNull()
+	}
+	if resp.SynchronizationType != nil {
+		r.SynchronizationType = types.StringValue(*resp.SynchronizationType)
+	} else {
+		r.SynchronizationType = types.StringNull()
+	}
 	if resp.Table != nil {
 		r.Table = types.StringValue(*resp.Table)
 	} else {
 		r.Table = types.StringNull()
+	}
+	if resp.UpdateBeforeSynchronizationRun != nil {
+		r.UpdateBeforeSynchronizationRun = types.StringValue(*resp.UpdateBeforeSynchronizationRun)
+	} else {
+		r.UpdateBeforeSynchronizationRun = types.StringNull()
+	}
+	if resp.View != nil {
+		r.View = types.StringValue(*resp.View)
+	} else {
+		r.View = types.StringNull()
 	}
 }

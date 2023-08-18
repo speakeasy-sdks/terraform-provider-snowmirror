@@ -9,7 +9,7 @@ import (
 
 type UpdateSynchronizationRequest struct {
 	// A JSON representation of the synchronization to update
-	CreateSynchronizationInput shared.CreateSynchronizationInput `request:"mediaType=application/json"`
+	CreateSynchronizationUpdate shared.CreateSynchronizationUpdate `request:"mediaType=application/json"`
 	// Id of the synchronization to update.
 	ID int64 `pathParam:"style=simple,explode=false,name=id"`
 }
